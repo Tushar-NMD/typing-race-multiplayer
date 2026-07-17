@@ -1,0 +1,77 @@
+{
+  "name": "Typeverse API",
+  "version": "1.0.0",
+  "requests": [
+    {
+      "name": "Health Check",
+      "method": "GET",
+      "url": "http://localhost:5000/",
+      "headers": []
+    },
+    {
+      "name": "Signup",
+      "method": "POST",
+      "url": "http://localhost:5000/api/auth/signup",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "name": "Tushar Kumar",
+        "username": "tushar",
+        "email": "tushar@example.com",
+        "password": "password123"
+      }
+    },
+    {
+      "name": "Login",
+      "method": "POST",
+      "url": "http://localhost:5000/api/auth/login",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "email": "tushar@example.com",
+        "password": "password123"
+      }
+    },
+    {
+      "name": "Get Me",
+      "method": "GET",
+      "url": "http://localhost:5000/api/auth/me",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer YOUR_TOKEN_HERE" }
+      ]
+    },
+    {
+      "name": "Create Room",
+      "method": "POST",
+      "url": "http://localhost:5000/api/rooms",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer YOUR_TOKEN_HERE" }
+      ],
+      "body": {
+        "maxPlayers": 4,
+        "duration": 60,
+        "language": "english",
+        "isPrivate": false
+      }
+    },
+    {
+      "name": "Get Public Rooms",
+      "method": "GET",
+      "url": "http://localhost:5000/api/rooms",
+      "headers": []
+    },
+    {
+      "name": "Join Room",
+      "method": "POST",
+      "url": "http://localhost:5000/api/rooms/ABC123/join",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer YOUR_TOKEN_HERE" }
+      ],
+      "body": {}
+    }
+  ]
+}
