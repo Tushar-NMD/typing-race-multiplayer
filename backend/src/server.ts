@@ -19,51 +19,64 @@ import aiRoutes from './routes/aiRoutes';
 import { setIO as setNotificationIO } from './controllers/notificationController';
 import { setIO as setAchievementIO } from './controllers/achievementController';
 
+// Socket
+import { setupSocketHandlers } from './socket/socketHandler';
+
 // Load environment variables
 dotenv.config();
 
-// Connect to database
+// Connect MongoDB
 connectDB();
 
-// Create Express app
+// Express App
 const app: Application = express();
 const httpServer = createServer(app);
 
-// Socket.IO setup
-const io = new Server(httpServer, {
-  cors: {
-    origin: (origin, callback) => {
-      // Allow localhost on any port
-      if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-        callback(null, true);
-      } else {
-        callback(new Error('CORS not allowed'));
-      }
-    },
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
+// ======================
+// CORS Configuration
+// ======================
 
-// Middleware
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow localhost on any port
-    if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+const allowedOrigins = [
+  'http://65.2.189.126',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
+
+const corsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('CORS not allowed'));
     }
   },
   credentials: true
-}));
+};
+
+// Express Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API Routes
+// Socket.IO
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
+
+// ======================
+// Routes
+// ======================
+
 app.get('/', (req, res) => {
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     message: 'Typeverse API is running',
     version: '1.0.0'
   });
@@ -77,19 +90,18 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/ai', aiRoutes);
 
-// Socket.IO handlers
-import { setupSocketHandlers } from './socket/socketHandler';
+// Socket Handlers
 setupSocketHandlers(io);
 
-// Set IO instances for notifications and achievements
+// Controllers
 setNotificationIO(io);
 setAchievementIO(io);
 
-// Error handling
+// Error Middleware
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
+// Start Server
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, () => {
