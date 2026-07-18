@@ -239,7 +239,7 @@ export const googleAuth = async (req: Request, res: Response) => {
         avatar: picture
       });
       // Initialize achievements for new user
-      await initializeAchievements(user._id);
+      await initializeAchievements(user._id.toString());
     }
 
     // Generate token
