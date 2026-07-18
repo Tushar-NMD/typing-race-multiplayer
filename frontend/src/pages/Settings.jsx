@@ -1,17 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { Moon, Sun, Monitor, Volume2, VolumeX, LogOut } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({
-    theme: 'dark',
-    fontSize: 'medium',
-    typingSound: true,
-    keyboardLayout: 'qwerty',
-    language: 'english'
-  });
+  const { settings, setSettings } = useSettings();
 
   const handleLogout = () => {
     navigate('/');

@@ -36,16 +36,22 @@ const UserSchema: Schema = new Schema({
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
+    required: [true, 'Please provide an email'],
     unique: true,
-    lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please provide a valid email'
+    ]
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
     minlength: 6,
     select: false
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   avatar: {
     type: String,
@@ -97,7 +103,7 @@ const UserSchema: Schema = new Schema({
 
 // Hash password before saving
 UserSchema.pre('save', async function() {
-  if (!this.isModified('password')) {
+  if (!this.isModified('password') || !this.password) {
     return;
   }
   const salt = await bcrypt.genSalt(10);
@@ -106,6 +112,7 @@ UserSchema.pre('save', async function() {
 
 // Compare password method
 UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  if (!this.password) return false;
   return await bcrypt.compare(candidatePassword, this.password);
 };
 

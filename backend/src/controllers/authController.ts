@@ -4,6 +4,9 @@ import User from '../models/User';
 import { generateToken } from '../utils/generateToken';
 import { AuthRequest } from '../middleware/auth';
 import { initializeAchievements } from './achievementController';
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Register user
 // @route   POST /api/auth/signup
@@ -184,5 +187,82 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Auth with Google
+// @route   POST /api/auth/google
+// @access  Public
+export const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ success: false, message: 'Google credential missing' });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return res.status(401).json({ success: false, message: 'Invalid Google token' });
+    }
+
+    const { email, name, sub: googleId, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // If user exists but doesn't have googleId, update it
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    } else {
+      // Create a new user
+      let username = name ? name.toLowerCase().replace(/[^a-z0-9]/g, '') : email?.split('@')[0];
+      if (!username) username = 'user';
+      let uniqueUsername = username;
+      let counter = 1;
+      while (await User.findOne({ username: uniqueUsername })) {
+        uniqueUsername = `${username}${counter}`;
+        counter++;
+      }
+
+      user = await User.create({
+        name,
+        email,
+        username: uniqueUsername,
+        googleId,
+        avatar: picture
+      });
+      // Initialize achievements for new user
+      await initializeAchievements(user._id);
+    }
+
+    // Generate token
+    const token = generateToken(user._id.toString());
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        highestWPM: user.highestWPM,
+        averageWPM: user.averageWPM,
+        accuracy: user.accuracy,
+        gamesPlayed: user.gamesPlayed,
+        wins: user.wins
+      }
+    });
+  } catch (error: any) {
+    console.error('Google Auth Error:', error);
+    res.status(500).json({ success: false, message: 'Google authentication failed' });
   }
 };

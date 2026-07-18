@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
+import ResultChart from '../components/ResultChart';
 import { getRandomParagraph, calculateWPM, calculateAccuracy } from '../utils/typingParagraphs';
 import { roomService } from '../services/roomService';
 
@@ -12,6 +14,7 @@ export default function MultiplayerGame() {
   const roomCode = searchParams.get('code');
   const { socket, connected } = useSocket();
   const { user } = useAuth();
+  const { playTypingSound } = useSettings();
   
   const [paragraph, setParagraph] = useState('');
   const [input, setInput] = useState('');
@@ -25,6 +28,12 @@ export default function MultiplayerGame() {
   const [showResults, setShowResults] = useState(false);
   const [errors, setErrors] = useState(0);
   const [correctChars, setCorrectChars] = useState(0);
+  const [chartData, setChartData] = useState({ time: [], wpm: [], raw: [] });
+  
+  const myStatsRef = useRef(myStats);
+  useEffect(() => {
+    myStatsRef.current = myStats;
+  }, [myStats]);
   
   const inputRef = useRef(null);
   const lastEmitTime = useRef(0);
@@ -104,20 +113,29 @@ export default function MultiplayerGame() {
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 1) {
+        const newTime = prev - 1;
+        
+        // Record stats for graph
+        setChartData(c => ({
+          time: [...c.time, `${gameDuration - newTime}s`],
+          wpm: [...c.wpm, myStatsRef.current.wpm],
+          raw: [...c.raw, myStatsRef.current.accuracy]
+        }));
+
+        if (newTime <= 0) {
           // Time's up - force finish
           if (!finished) {
             setFinished(true);
             const elapsed = gameDuration; // Use actual game duration
-            const finalWpm = calculateWPM(correctChars, elapsed);
-            const finalAccuracy = calculateAccuracy(correctChars, input.length);
+            const finalWpm = myStatsRef.current.wpm;
+            const finalAccuracy = myStatsRef.current.accuracy;
             
             socket?.emit('game-complete', {
               roomCode,
               wpm: finalWpm,
               accuracy: finalAccuracy,
               timeTaken: elapsed,
-              paragraph: paragraph
+              paragraph
             });
           }
           
@@ -128,12 +146,12 @@ export default function MultiplayerGame() {
           
           return 0;
         }
-        return prev - 1;
+        return newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [finished, showResults, correctChars, input.length, paragraph, gameDuration]);
+  }, [finished, showResults, gameDuration, paragraph, roomCode, socket]);
 
   // Handle typing
   const handleTyping = (e) => {
@@ -144,6 +162,11 @@ export default function MultiplayerGame() {
     // Prevent typing beyond paragraph length
     if (value.length > paragraph.length) {
       return;
+    }
+    
+    // Play sound if input increased
+    if (value.length > input.length) {
+      playTypingSound();
     }
 
     setInput(value);
@@ -308,6 +331,20 @@ export default function MultiplayerGame() {
               )}
             </div>
 
+            {/* Personal Performance Graph */}
+            <div className="mb-12 bg-slate-800 rounded-xl p-6">
+              <h2 className="text-2xl font-bold mb-4 text-center">Your Performance</h2>
+              <div className="bg-slate-700/30 rounded-lg p-4">
+                <ResultChart data={{
+                  series1Name: 'WPM',
+                  series2Name: 'Accuracy (%)',
+                  time: chartData.time,
+                  wpm: chartData.wpm,
+                  raw: chartData.raw
+                }} />
+              </div>
+            </div>
+
             {/* Action Buttons */}
             <div className="flex space-x-4">
               <button
@@ -427,6 +464,25 @@ export default function MultiplayerGame() {
             {finished && (
               <div className="mt-4 p-4 bg-green-500/10 border border-green-500 rounded-lg text-green-500 text-center">
                 <p className="font-semibold">✓ Finished! Waiting for other players...</p>
+              </div>
+            )}
+
+            {/* Live Performance Graph */}
+            {!finished && chartData.time.length > 0 && (
+              <div className="mt-6 bg-slate-800 rounded-xl p-4 hidden md:block">
+                <h3 className="text-slate-400 text-sm font-semibold mb-2">Live Performance</h3>
+                <div className="bg-slate-700/30 rounded-lg p-2 h-48">
+                  <ResultChart 
+                    className="h-full"
+                    data={{
+                      series1Name: 'WPM',
+                      series2Name: 'Accuracy (%)',
+                      time: chartData.time,
+                      wpm: chartData.wpm,
+                      raw: chartData.raw
+                    }} 
+                  />
+                </div>
               </div>
             )}
           </div>

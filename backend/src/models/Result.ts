@@ -18,8 +18,7 @@ const ResultSchema: Schema = new Schema({
   },
   matchId: {
     type: Schema.Types.ObjectId,
-    ref: 'Match',
-    required: true
+    ref: 'Match'
   },
   wpm: {
     type: Number,

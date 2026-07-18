@@ -4,13 +4,15 @@ import {
   getMatchDetails,
   getUserStats,
   getLeaderboard,
-  getFriendLeaderboard
+  getFriendLeaderboard,
+  savePracticeResult
 } from '../controllers/matchController';
 import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
 // Routes with specific paths first (to prevent /:matchId from catching them)
+router.post('/practice', protect, savePracticeResult);
 router.get('/history', protect, getUserMatchHistory);
 router.get('/stats/me', protect, getUserStats);
 router.get('/leaderboard/friends', protect, getFriendLeaderboard);

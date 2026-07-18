@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { signup, login, getMe, updateProfile } from '../controllers/authController';
+import { signup, login, getMe, updateProfile, googleAuth } from '../controllers/authController';
 import { protect } from '../middleware/auth';
 
 const router = express.Router();
@@ -16,6 +16,7 @@ const signupValidation = [
 // Public routes
 router.post('/signup', signupValidation, signup);
 router.post('/login', login);
+router.post('/google', googleAuth);
 
 // Protected routes
 router.get('/me', protect, getMe);

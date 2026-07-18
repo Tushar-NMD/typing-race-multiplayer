@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import ResultChart from '../components/ResultChart';
+import { useSettings } from '../context/SettingsContext';
+import { matchService } from '../services/matchService';
 
 const sampleText = "The quick brown fox jumps over the lazy dog. Practice makes perfect. Keep typing to improve your speed and accuracy. Focus on the words and let your fingers do the work.";
 
 export default function PracticeGame() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { playTypingSound } = useSettings();
   const settings = location.state || { time: 60, difficulty: 'medium' };
 
   const [timeLeft, setTimeLeft] = useState(settings.time);
@@ -16,16 +20,35 @@ export default function PracticeGame() {
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const [mistakes, setMistakes] = useState(0);
+  const [chartData, setChartData] = useState({ time: [], wpm: [], raw: [] });
   const inputRef = useRef(null);
+
+  const statsRef = useRef({ wpm: 0, accuracy: 100, mistakes: 0 });
+  useEffect(() => {
+    statsRef.current = { wpm, accuracy, mistakes };
+  }, [wpm, accuracy, mistakes]);
 
   useEffect(() => {
     if (started && timeLeft > 0 && !finished) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      const timer = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+        setChartData(prev => ({
+          time: [...prev.time, `${settings.time - timeLeft + 1}s`],
+          wpm: [...prev.wpm, statsRef.current.wpm],
+          raw: [...prev.raw, statsRef.current.accuracy]
+        }));
+      }, 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && !finished) {
       setFinished(true);
+      // Save practice result to backend
+      matchService.savePracticeResult({
+        wpm: statsRef.current.wpm,
+        accuracy: statsRef.current.accuracy,
+        mistakes: statsRef.current.mistakes
+      }).catch(err => console.error("Failed to save practice result:", err));
     }
-  }, [started, timeLeft, finished]);
+  }, [started, timeLeft, finished, settings.time]);
 
   useEffect(() => {
     if (input.length > 0) {
@@ -46,6 +69,10 @@ export default function PracticeGame() {
 
   const handleInputChange = (e) => {
     if (!started) setStarted(true);
+    // Play sound if input increased (a character was typed)
+    if (e.target.value.length > input.length) {
+      playTypingSound();
+    }
     setInput(e.target.value);
   };
 
@@ -57,6 +84,7 @@ export default function PracticeGame() {
     setWpm(0);
     setAccuracy(100);
     setMistakes(0);
+    setChartData({ time: [], wpm: [], raw: [] });
   };
 
   if (finished) {
@@ -84,6 +112,17 @@ export default function PracticeGame() {
                 <p className="text-3xl font-bold">{settings.time}s</p>
               </div>
             </div>
+            
+            <div className="mb-8 bg-slate-700/30 rounded-xl p-4">
+              <ResultChart data={{
+                series1Name: 'WPM',
+                series2Name: 'Accuracy (%)',
+                time: chartData.time,
+                wpm: chartData.wpm,
+                raw: chartData.raw
+              }} />
+            </div>
+
             <div className="flex space-x-4">
               <button
                 onClick={handleRestart}

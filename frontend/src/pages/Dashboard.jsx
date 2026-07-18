@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import { Zap, Users, Trophy, History, UserCircle, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { matchService } from '../services/matchService';
+import ResultsPage from './ResultsPage';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -12,42 +13,40 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let intervalId;
+    
+    const fetchData = async (isInitial = false) => {
       try {
-        setLoading(true);
-        console.log('📊 Fetching dashboard data for user:', user);
+        if (isInitial) setLoading(true);
         
         // Fetch user stats
         const statsResponse = await matchService.getUserStats();
-        console.log('📊 Stats response:', statsResponse);
         if (statsResponse.success) {
-          console.log('✅ Stats fetched:', statsResponse.data);
           setStats(statsResponse.data);
-        } else {
-          console.warn('⚠️ Stats API returned success: false');
         }
 
         // Fetch match history
-        const historyResponse = await matchService.getUserHistory(5);
-        console.log('📊 History response:', historyResponse);
+        const historyResponse = await matchService.getUserHistory(20);
         if (historyResponse.success) {
-          console.log('✅ History fetched:', historyResponse.data);
           setHistory(historyResponse.data);
-        } else {
-          console.warn('⚠️ History API returned success: false');
         }
       } catch (error) {
         console.error('❌ Failed to fetch dashboard data:', error);
       } finally {
-        setLoading(false);
+        if (isInitial) setLoading(false);
       }
     };
 
     if (user) {
-      fetchData();
+      fetchData(true);
+      intervalId = setInterval(() => fetchData(false), 3000); // Poll every 3 seconds for real-time updates
     } else {
       console.log('⚠️ User not available yet');
     }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [user]);
 
   return (
@@ -88,49 +87,38 @@ export default function Dashboard() {
           </nav>
         </aside>
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 min-w-0 p-8 overflow-x-hidden">
           <h1 className="text-3xl font-bold mb-2">Hello {user?.name} 👋</h1>
           <p className="text-slate-400 mb-8">Ready to improve your typing speed?</p>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Your Stats</h2>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-              <div className="bg-slate-800 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Average WPM</p>
-                <p className="text-3xl font-bold text-indigo-500">
-                  {stats?.averageWPM !== undefined ? stats.averageWPM : user?.averageWPM || 0}
-                </p>
-              </div>
-              <div className="bg-slate-800 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Highest WPM</p>
-                <p className="text-3xl font-bold text-green-500">
-                  {stats?.highestWPM !== undefined ? stats.highestWPM : user?.highestWPM || 0}
-                </p>
-              </div>
-              <div className="bg-slate-800 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Accuracy</p>
-                <p className="text-3xl font-bold text-blue-500">
-                  {stats?.avgAccuracy !== undefined ? stats.avgAccuracy : user?.accuracy || 0}%
-                </p>
-              </div>
-              <div className="bg-slate-800 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Games Played</p>
-                <p className="text-3xl font-bold">
-                  {stats?.gamesPlayed !== undefined ? stats.gamesPlayed : user?.gamesPlayed || 0}
-                </p>
-              </div>
-              <div className="bg-slate-800 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Wins</p>
-                <p className="text-3xl font-bold text-yellow-500">
-                  {stats?.wins !== undefined ? stats.wins : user?.wins || 0}
-                </p>
-              </div>
+            <h2 className="text-2xl font-bold mb-6">Recent Performance</h2>
+            <div className="bg-slate-800 rounded-xl px-8 py-6">
+              <ResultsPage 
+                mockData={
+                  history.length > 0 ? {
+                    series1Name: 'WPM',
+                    series2Name: 'Accuracy (%)',
+                    time: history.length === 1 ? ['Start', new Date(history[0].createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})] : [...history].reverse().map(h => new Date(h.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})),
+                    wpm: history.length === 1 ? [0, history[0].wpm] : [...history].reverse().map(h => h.wpm),
+                    raw: history.length === 1 ? [0, history[0].accuracy] : [...history].reverse().map(h => h.accuracy) // Using accuracy as the secondary line for dashboard
+                  } : null
+                }
+                mockStats={
+                  stats ? {
+                    wpm: stats.highestWPM || 0,
+                    accuracy: stats.avgAccuracy || 0,
+                    raw: stats.averageWPM || 0,
+                    consistency: stats.winRate || 0,
+                    characters: { correct: stats.gamesPlayed || 0, incorrect: stats.wins || 0, extra: 0, missed: 0 },
+                    time: '-',
+                    language: 'Aggregate',
+                    difficulty: 'Profile',
+                    testType: 'All Time'
+                  } : null
+                }
+              />
             </div>
-            {stats && (
-              <div className="mt-4 text-sm text-slate-400">
-                <p>Win Rate: <span className="text-green-400 font-bold">{stats.winRate || 0}%</span></p>
-              </div>
-            )}
           </section>
 
           <section className="mb-12">

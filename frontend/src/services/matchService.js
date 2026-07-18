@@ -1,6 +1,12 @@
 import api from './api';
 
 export const matchService = {
+  // Save practice result
+  savePracticeResult: async (resultData) => {
+    const response = await api.post('/matches/practice', resultData);
+    return response.data;
+  },
+
   // Get user's match history
   getUserHistory: async (limit = 10, skip = 0) => {
     const response = await api.get('/matches/history', {

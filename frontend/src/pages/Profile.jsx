@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
-import { User, Edit2, Trophy } from 'lucide-react';
+import { User, Edit2, Trophy, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/authService';
+import { useEffect } from 'react';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
@@ -13,12 +15,28 @@ export default function Profile() {
     name: user?.name || '',
     email: user?.email || ''
   });
+  const [profileUser, setProfileUser] = useState(user);
+
+  useEffect(() => {
+    // Fetch fresh user data on mount to show real updated stats
+    const fetchFreshData = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        if (response.success) {
+          setProfileUser(response.user);
+        }
+      } catch (err) {
+        console.error('Failed to fetch fresh user data', err);
+      }
+    };
+    fetchFreshData();
+  }, []);
 
   const achievements = [
-    { id: 1, name: 'Speed Demon', description: 'Reach 100 WPM', icon: '⚡', unlocked: (user?.highestWPM || 0) >= 100 },
-    { id: 2, name: 'Perfect Game', description: '100% Accuracy', icon: '🎯', unlocked: (user?.accuracy || 0) >= 100 },
-    { id: 3, name: 'Century Club', description: 'Play 100 games', icon: '💯', unlocked: (user?.gamesPlayed || 0) >= 100 },
-    { id: 4, name: 'Winner Winner', description: 'Win 50 multiplayer games', icon: '👑', unlocked: (user?.wins || 0) >= 50 }
+    { id: 1, name: 'Speed Demon', description: 'Reach 100 WPM', icon: '⚡', unlocked: (profileUser?.highestWPM || 0) >= 100 },
+    { id: 2, name: 'Perfect Game', description: '100% Accuracy', icon: '🎯', unlocked: (profileUser?.accuracy || 0) >= 100 },
+    { id: 3, name: 'Century Club', description: 'Play 100 games', icon: '💯', unlocked: (profileUser?.gamesPlayed || 0) >= 100 },
+    { id: 4, name: 'Winner Winner', description: 'Win 50 multiplayer games', icon: '👑', unlocked: (profileUser?.wins || 0) >= 50 }
   ];
 
   const handleSave = async () => {
@@ -69,10 +87,10 @@ export default function Profile() {
                   <User size={48} />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{user?.name}</h1>
-                  <p className="text-slate-400">@{user?.username}</p>
+                  <h1 className="text-3xl font-bold mb-2">{profileUser?.name}</h1>
+                  <p className="text-slate-400">@{profileUser?.username}</p>
                   <p className="text-sm text-slate-500 mt-1">
-                    Joined {user?.createdAt ? formatDate(user.createdAt) : 'Unknown'}
+                    Joined {profileUser?.createdAt ? formatDate(profileUser.createdAt) : 'Unknown'}
                   </p>
                 </div>
               </div>
@@ -117,25 +135,25 @@ export default function Profile() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
+            <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Highest WPM</p>
-              <p className="text-3xl font-bold text-green-500">{user?.highestWPM || 0}</p>
+              <p className="text-3xl font-bold text-green-500">{profileUser?.highestWPM || 0}</p>
             </div>
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
+            <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Average WPM</p>
-              <p className="text-3xl font-bold text-indigo-500">{user?.averageWPM || 0}</p>
+              <p className="text-3xl font-bold text-indigo-500">{profileUser?.averageWPM || 0}</p>
             </div>
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
+            <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Accuracy</p>
-              <p className="text-3xl font-bold text-blue-500">{user?.accuracy || 0}%</p>
+              <p className="text-3xl font-bold text-blue-500">{profileUser?.accuracy || 0}%</p>
             </div>
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
+            <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Games Played</p>
-              <p className="text-3xl font-bold">{user?.gamesPlayed || 0}</p>
+              <p className="text-3xl font-bold">{profileUser?.gamesPlayed || 0}</p>
             </div>
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
+            <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Wins</p>
-              <p className="text-3xl font-bold text-yellow-500">{user?.wins || 0}</p>
+              <p className="text-3xl font-bold text-yellow-500">{profileUser?.wins || 0}</p>
             </div>
           </div>
 

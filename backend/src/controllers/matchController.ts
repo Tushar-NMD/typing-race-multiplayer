@@ -42,6 +42,48 @@ export const getUserMatchHistory = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// @desc    Save practice match result
+// @route   POST /api/matches/practice
+// @access  Private
+export const savePracticeResult = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    const { wpm, accuracy, mistakes } = req.body;
+
+    const result = await Result.create({
+      userId,
+      wpm,
+      accuracy,
+      mistakes,
+      position: 1 // For practice, position is always 1
+    });
+
+    // Update user stats
+    const user = await User.findById(userId);
+    if (user) {
+      user.gamesPlayed += 1;
+      user.wins += 1; // Practice counts as a win? Sure, why not, or maybe don't touch wins
+      user.highestWPM = Math.max(user.highestWPM || 0, wpm);
+      
+      // Calculate new moving averages roughly
+      if (!user.averageWPM) user.averageWPM = wpm;
+      else user.averageWPM = Math.round((user.averageWPM * (user.gamesPlayed - 1) + wpm) / user.gamesPlayed);
+      
+      if (!user.accuracy) user.accuracy = accuracy;
+      else user.accuracy = Math.round((user.accuracy * (user.gamesPlayed - 1) + accuracy) / user.gamesPlayed);
+
+      await user.save();
+    }
+
+    res.status(201).json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc    Get match details with all players
 // @route   GET /api/matches/:matchId
 // @access  Private

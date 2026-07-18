@@ -24,6 +24,11 @@ export default function Navbar() {
               <Link to="/" className="text-slate-300 hover:text-white transition-colors">
                 Home
               </Link>
+              {isAuthenticated && (
+                <Link to="/dashboard" className="text-slate-300 hover:text-white transition-colors">
+                  Dashboard
+                </Link>
+              )}
               <Link to="/leaderboard" className="text-slate-300 hover:text-white transition-colors">
                 Leaderboard
               </Link>
