@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { Zap, Users, Trophy, History, UserCircle, Settings } from 'lucide-react';
+import { Zap, Users, Trophy, History, UserCircle, Settings, Bot } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { matchService } from '../services/matchService';
 import ResultsPage from './ResultsPage';
@@ -63,6 +63,10 @@ export default function Dashboard() {
             <Link to="/practice" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Zap size={20} />
               <span>Practice</span>
+            </Link>
+            <Link to="/ai-practice" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+              <Bot size={20} />
+              <span>Ghost AI Race</span>
             </Link>
             <Link to="/multiplayer" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Users size={20} />
@@ -126,6 +130,9 @@ export default function Dashboard() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Link to="/practice" className="bg-indigo-600 hover:bg-indigo-700 rounded-lg p-6 text-center transition">
                 <p className="font-semibold">Start Practice</p>
+              </Link>
+              <Link to="/ai-practice" className="bg-purple-600 hover:bg-purple-700 rounded-lg p-6 text-center transition">
+                <p className="font-semibold">Race AI Bot</p>
               </Link>
               <Link to="/multiplayer" className="bg-slate-800 hover:bg-slate-700 rounded-lg p-6 text-center transition">
                 <p className="font-semibold">Create Room</p>

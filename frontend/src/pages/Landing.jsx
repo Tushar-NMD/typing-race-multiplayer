@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Zap, TrendingUp, Trophy, Globe, Target, Keyboard, ChevronRight } from 'lucide-react';
+import { Zap, TrendingUp, Trophy, Globe, Target, Keyboard, ChevronRight, Bot } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 export default function Landing() {
@@ -10,7 +10,7 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-200 font-sans selection:bg-indigo-500/30 overflow-hidden">
+    <div className="min-h-screen bg-slate-900 font-sans selection:bg-indigo-500/30 overflow-hidden">
       <Navbar />
 
       {/* Hero Section */}
@@ -39,11 +39,11 @@ export default function Landing() {
 
         <div className="flex flex-col sm:flex-row justify-center gap-6 items-center w-full sm:w-auto">
           <Link
-            to="/practice"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-xl text-lg font-bold hover:bg-indigo-500 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)] hover:shadow-[0_0_60px_-15px_rgba(79,70,229,0.7)] hover:-translate-y-1"
+            to="/ai-practice"
+            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-lg font-bold hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)] hover:shadow-[0_0_60px_-15px_rgba(79,70,229,0.7)] hover:-translate-y-1"
           >
-            <Keyboard size={24} />
-            <span>Start Practice</span>
+            <Bot size={24} />
+            <span>Race Ghost AI</span>
             <div className="absolute inset-0 rounded-xl ring-2 ring-white/20 group-hover:ring-white/40 transition-all"></div>
           </Link>
 
@@ -68,12 +68,12 @@ export default function Landing() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
+              { icon: <Bot size={32} />, title: "Ghost AI Coach", desc: "Race against an adaptive AI that matches your speed, analyzes your mistakes, and generates custom exercises.", color: "from-indigo-500 to-purple-500" },
               { icon: <Zap size={32} />, title: "Real-time Multiplayer", desc: "Race against friends or random players worldwide with zero latency.", color: "from-blue-500 to-indigo-500" },
               { icon: <TrendingUp size={32} />, title: "Advanced Analytics", desc: "Track your WPM, accuracy, and consistency with detailed charts.", color: "from-purple-500 to-pink-500" },
               { icon: <Trophy size={32} />, title: "Global Leaderboards", desc: "Compete for the top spot and earn exclusive badges and rewards.", color: "from-amber-400 to-orange-500" },
               { icon: <Globe size={32} />, title: "Custom Themes", desc: "Personalize your typing environment with beautiful, handcrafted themes.", color: "from-emerald-400 to-teal-500" },
-              { icon: <Target size={32} />, title: "Daily Challenges", desc: "Complete daily typing quests to earn XP and level up your profile.", color: "from-rose-400 to-red-500" },
-              { icon: <Keyboard size={32} />, title: "Custom Tests", desc: "Create your own text snippets or import custom content to practice.", color: "from-cyan-400 to-blue-500" }
+              { icon: <Target size={32} />, title: "Daily Challenges", desc: "Complete daily typing quests to earn XP and level up your profile.", color: "from-rose-400 to-red-500" }
             ].map((feature, idx) => (
               <div key={idx} className="group relative bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 hover:bg-slate-800/60 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
                 <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
@@ -138,7 +138,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 bg-[#0a0a0f] py-12">
+      <footer className="border-t border-slate-800 bg-slate-900 py-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-6">
           <div className="text-2xl font-black tracking-tight text-white">
             TYPE<span className="text-indigo-500">VERSE</span>

@@ -5,6 +5,8 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Practice from './pages/Practice';
 import PracticeGame from './pages/PracticeGame';
+import AIPracticeSetup from './pages/AIPracticeSetup';
+import AIGame from './pages/AIGame';
 import Multiplayer from './pages/Multiplayer';
 import WaitingRoom from './pages/WaitingRoom';
 import MultiplayerGame from './pages/MultiplayerGame';
@@ -32,6 +34,8 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/practice" element={<ProtectedRoute><Practice /></ProtectedRoute>} />
         <Route path="/practice/game" element={<ProtectedRoute><PracticeGame /></ProtectedRoute>} />
+        <Route path="/ai-practice" element={<ProtectedRoute><AIPracticeSetup /></ProtectedRoute>} />
+        <Route path="/ai-practice/game" element={<ProtectedRoute><AIGame /></ProtectedRoute>} />
         <Route path="/multiplayer" element={<ProtectedRoute><Multiplayer /></ProtectedRoute>} />
         <Route path="/multiplayer/waiting" element={<ProtectedRoute><WaitingRoom /></ProtectedRoute>} />
         <Route path="/multiplayer/game" element={<ProtectedRoute><MultiplayerGame /></ProtectedRoute>} />

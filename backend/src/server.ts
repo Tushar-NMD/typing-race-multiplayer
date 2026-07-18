@@ -13,6 +13,7 @@ import matchRoutes from './routes/matchRoutes';
 import friendRoutes from './routes/friendRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import achievementRoutes from './routes/achievementRoutes';
+import aiRoutes from './routes/aiRoutes';
 
 // Controllers
 import { setIO as setNotificationIO } from './controllers/notificationController';
@@ -74,6 +75,7 @@ app.use('/api/matches', matchRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/achievements', achievementRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Socket.IO handlers
 import { setupSocketHandlers } from './socket/socketHandler';
