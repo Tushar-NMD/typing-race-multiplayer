@@ -1,25 +1,24 @@
-// Collection of typing paragraphs for multiplayer games
-export const typingParagraphs = {
-  easy: [
-    "The sun sets over the calm ocean. Birds fly across the sky. People walk along the beach. Children play in the sand.",
-    "Cats sleep on warm windowsills. Dogs run in the park. Fish swim in the pond. Rabbits hop through the garden.",
-    "Books sit on wooden shelves. Pens rest on the desk. Papers stack in neat piles. Lamps light up the room.",
-  ],
-  medium: [
-    "Technology has transformed the way we communicate with each other. Social media platforms connect millions of people worldwide. Information travels faster than ever before in human history.",
-    "The ancient library contained countless volumes of wisdom and knowledge. Scholars traveled from distant lands to study the manuscripts. Each book held secrets waiting to be discovered by curious minds.",
-    "Mountain climbers prepare carefully for their challenging expeditions. They check their equipment and study weather patterns. Success requires determination, skill, and respect for nature's power.",
-  ],
-  hard: [
-    "Quantum mechanics fundamentally challenges our intuitive understanding of reality. Subatomic particles exhibit wave-particle duality, existing in superposition states until observed. The uncertainty principle suggests that certain pairs of physical properties cannot be simultaneously known with arbitrary precision.",
-    "Artificial intelligence algorithms process vast datasets to identify complex patterns and correlations. Machine learning models continuously refine their predictions through iterative training cycles. Neural networks attempt to replicate the interconnected architecture of biological brains.",
-    "Cryptocurrency blockchain technology utilizes cryptographic hashing and distributed consensus mechanisms. Decentralized networks validate transactions without centralized authority or intermediaries. Mining operations solve computationally intensive mathematical problems to secure the ledger.",
-  ]
+const wordPools = {
+  english: "the be to of and a in that have i it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us".split(" "),
+  spanish: "el la de que y en un ser a por con no una su para es como tener le lo todo pero más hacer o poder decir este ir otro ese la si me ya ver porque dar cuando él muy sin vez mucho saber qué sobre mi alguno mismo yo también hasta hay donde quien desde todo nos ni entre gente día esto bien poco cosas año dos parte".split(" "),
+  french: "le la les de et un une en être pour à dans ce qui avoir ne sur pas plus ou se avec par mais il on comme tout faire son pouvoir dire aller y voir bien où sans eux mon nouveau moins quand comment dire monsieur".split(" "),
+  german: "der die das und in den von zu dem für mit auf des sich als nicht nach an es ein auch bei um noch wie aus oder über vor aber dann schon hier so was sein haben werden können sagen machen tun lassen geben sehen".split(" ")
 };
 
-export const getRandomParagraph = (difficulty = 'medium') => {
-  const paragraphs = typingParagraphs[difficulty] || typingParagraphs.medium;
-  return paragraphs[Math.floor(Math.random() * paragraphs.length)];
+export const getRandomParagraph = (language = 'english', duration = 60) => {
+  const pool = wordPools[language.toLowerCase()] || wordPools.english;
+  // Assume a fast typist types at 120 WPM = 2 words per second
+  const wordCount = Math.max(10, Math.ceil(duration * 2));
+  
+  let result = [];
+  for (let i = 0; i < wordCount; i++) {
+    const randomWord = pool[Math.floor(Math.random() * pool.length)];
+    result.push(randomWord);
+  }
+  
+  // Capitalize first word and add period at end for some basic formatting
+  const text = result.join(' ');
+  return text.charAt(0).toUpperCase() + text.slice(1) + '.';
 };
 
 export const calculateWPM = (characters, seconds) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { Trophy } from 'lucide-react';
+import { Trophy, ArrowLeft } from 'lucide-react';
 import { matchService } from '../services/matchService';
 
 export default function Leaderboard() {
@@ -47,6 +48,10 @@ export default function Leaderboard() {
       <Navbar isLoggedIn={true} />
 
       <div className="container mx-auto px-4 py-16">
+        <Link to="/dashboard" className="inline-flex items-center text-slate-400 hover:text-white transition mb-6">
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Dashboard
+        </Link>
         <div className="flex items-center justify-center mb-12">
           <Trophy className="text-yellow-500 mr-4" size={48} />
           <h1 className="text-4xl font-bold">Leaderboard</h1>

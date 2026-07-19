@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { User, Edit2, Trophy, RefreshCw } from 'lucide-react';
+import { User, Edit2, Trophy, RefreshCw, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
 import { useEffect } from 'react';
@@ -68,6 +69,10 @@ export default function Profile() {
       <Navbar />
 
       <div className="container mx-auto px-4 py-16">
+        <Link to="/dashboard" className="inline-flex items-center text-slate-400 hover:text-white transition mb-6">
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Dashboard
+        </Link>
         <div className="max-w-4xl mx-auto">
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-lg text-red-500">

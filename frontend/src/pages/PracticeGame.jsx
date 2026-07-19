@@ -4,14 +4,14 @@ import Navbar from '../components/Navbar';
 import ResultChart from '../components/ResultChart';
 import { useSettings } from '../context/SettingsContext';
 import { matchService } from '../services/matchService';
-
-const sampleText = "The quick brown fox jumps over the lazy dog. Practice makes perfect. Keep typing to improve your speed and accuracy. Focus on the words and let your fingers do the work.";
+import { getRandomParagraph } from '../utils/typingParagraphs';
 
 export default function PracticeGame() {
   const navigate = useNavigate();
   const location = useLocation();
   const { playTypingSound } = useSettings();
-  const settings = location.state || { time: 60, difficulty: 'medium' };
+  const settings = location.state || { time: 60, difficulty: 'medium', language: 'english' };
+  const [sampleText, setSampleText] = useState(() => getRandomParagraph(settings.language, settings.time));
 
   const [timeLeft, setTimeLeft] = useState(settings.time);
   const [input, setInput] = useState('');
@@ -85,6 +85,7 @@ export default function PracticeGame() {
     setAccuracy(100);
     setMistakes(0);
     setChartData({ time: [], wpm: [], raw: [] });
+    setSampleText(getRandomParagraph(settings.language, settings.time));
   };
 
   if (finished) {

@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { Moon, Sun, Monitor, Volume2, VolumeX, LogOut } from 'lucide-react';
+import { Moon, Sun, Monitor, Volume2, VolumeX, LogOut, ArrowLeft } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 
 export default function Settings() {
@@ -16,6 +16,10 @@ export default function Settings() {
       <Navbar isLoggedIn={true} />
 
       <div className="container mx-auto px-4 py-16">
+        <Link to="/dashboard" className="inline-flex items-center text-slate-400 hover:text-white transition mb-6">
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Dashboard
+        </Link>
         <h1 className="text-4xl font-bold mb-12">Settings</h1>
 
         <div className="max-w-3xl mx-auto space-y-6">

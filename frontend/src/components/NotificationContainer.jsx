@@ -34,7 +34,7 @@ export default function NotificationContainer() {
   };
 
   return (
-    <div className="fixed top-20 right-6 z-50 space-y-3 pointer-events-none">
+    <div className="fixed top-20 right-4 left-4 sm:left-auto sm:right-6 z-50 space-y-3 pointer-events-none">
       {toasts.map((toast) => (
         <div key={toast.toastId} className="pointer-events-auto">
           <NotificationToast

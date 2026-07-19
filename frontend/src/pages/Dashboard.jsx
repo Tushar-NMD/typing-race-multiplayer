@@ -53,38 +53,38 @@ export default function Dashboard() {
     <div className="min-h-screen bg-slate-900">
       <Navbar />
 
-      <div className="flex">
-        <aside className="hidden lg:block w-64 bg-slate-800 min-h-screen border-r border-slate-700">
-          <nav className="p-4 space-y-2">
-            <Link to="/dashboard" className="flex items-center space-x-3 px-4 py-3 bg-slate-700 rounded-lg">
+      <div className="flex flex-col lg:flex-row">
+        <aside className="w-full lg:w-64 bg-slate-800 lg:min-h-screen border-b lg:border-r border-slate-700 overflow-x-auto">
+          <nav className="p-4 flex lg:block flex-row space-x-2 lg:space-x-0 lg:space-y-2">
+            <Link to="/dashboard" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 bg-slate-700 rounded-lg">
               <Zap size={20} />
               <span>Dashboard</span>
             </Link>
-            <Link to="/practice" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/practice" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Zap size={20} />
               <span>Practice</span>
             </Link>
-            <Link to="/ai-practice" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/ai-practice" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Bot size={20} />
               <span>Ghost AI Race</span>
             </Link>
-            <Link to="/multiplayer" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/multiplayer" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Users size={20} />
               <span>Multiplayer</span>
             </Link>
-            <Link to="/leaderboard" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/leaderboard" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Trophy size={20} />
               <span>Leaderboard</span>
             </Link>
-            <Link to="/history" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/history" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <History size={20} />
               <span>History</span>
             </Link>
-            <Link to="/friends" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/friends" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <UserCircle size={20} />
               <span>Friends</span>
             </Link>
-            <Link to="/settings" className="flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
+            <Link to="/settings" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 hover:bg-slate-700 rounded-lg transition">
               <Settings size={20} />
               <span>Settings</span>
             </Link>
@@ -148,8 +148,8 @@ export default function Dashboard() {
 
           <section>
             <h2 className="text-2xl font-bold mb-6">Recent Games</h2>
-            <div className="bg-slate-800 rounded-lg overflow-hidden">
-              <table className="w-full">
+            <div className="bg-slate-800 rounded-lg overflow-x-auto">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-slate-700">
                   <tr>
                     <th className="px-6 py-3 text-left">Date</th>

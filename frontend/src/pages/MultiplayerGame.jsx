@@ -47,11 +47,14 @@ export default function MultiplayerGame() {
     }
 
     const initializeGame = async () => {
+      let duration = 60;
+      let language = 'english';
       try {
         // Fetch room to get duration
         const roomResponse = await roomService.getRoom(roomCode);
         if (roomResponse.success) {
-          const duration = roomResponse.room.duration || 60;
+          duration = roomResponse.room.duration || 60;
+          language = roomResponse.room.language || 'english';
           setGameDuration(duration);
           setTimeLeft(duration);
         }
@@ -60,7 +63,7 @@ export default function MultiplayerGame() {
       }
 
       // Generate random paragraph
-      const newParagraph = getRandomParagraph('medium');
+      const newParagraph = getRandomParagraph(language, duration);
       setParagraph(newParagraph);
       setGameStartTime(Date.now());
     };

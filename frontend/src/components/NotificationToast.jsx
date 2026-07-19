@@ -51,7 +51,7 @@ export function NotificationToast({ notification, onClose }) {
 
   return (
     <div
-      className={`${getBackgroundColor(notification.type)} text-white px-6 py-4 rounded-lg shadow-lg flex items-center justify-between gap-4 max-w-md animate-in slide-in-from-top`}
+      className={`${getBackgroundColor(notification.type)} text-white px-6 py-4 rounded-lg shadow-lg flex items-center justify-between gap-4 w-full max-w-md break-words animate-in slide-in-from-top`}
     >
       <div className="flex items-center gap-3">
         <span className="text-2xl">{getIcon(notification.type)}</span>
