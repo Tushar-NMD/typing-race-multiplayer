@@ -50,11 +50,10 @@ export default function Dashboard() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
 
-      <div className="flex flex-col lg:flex-row">
-        <aside className="w-full lg:w-64 bg-slate-800 lg:min-h-screen border-b lg:border-r border-slate-700 overflow-x-auto">
+      <aside className="w-full pt-16 lg:pt-0 lg:fixed lg:top-16 lg:left-0 lg:bottom-0 lg:w-64 lg:z-40 bg-slate-800/40 backdrop-blur-xl border-b lg:border-r border-white/10 overflow-x-auto overflow-y-auto">
           <nav className="p-4 flex lg:block flex-row space-x-2 lg:space-x-0 lg:space-y-2">
             <Link to="/dashboard" className="flex-shrink-0 flex items-center space-x-3 px-4 py-3 bg-slate-700 rounded-lg">
               <Zap size={20} />
@@ -89,15 +88,15 @@ export default function Dashboard() {
               <span>Settings</span>
             </Link>
           </nav>
-        </aside>
+      </aside>
 
-        <main className="flex-1 min-w-0 p-8 overflow-x-hidden">
-          <h1 className="text-3xl font-bold mb-2">Hello {user?.name} 👋</h1>
+      <main className="lg:pt-16 lg:ml-64 flex-1 min-w-0 p-8 overflow-x-hidden">
+          <h1 className="text-3xl font-bold mb-2 text-white">Hello {user?.name} 👋</h1>
           <p className="text-slate-400 mb-8">Ready to improve your typing speed?</p>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Recent Performance</h2>
-            <div className="bg-slate-800 rounded-xl px-8 py-6">
+            <h2 className="text-2xl font-bold mb-6 text-white">Recent Performance</h2>
+            <div className="bg-slate-800 rounded-xl px-8 py-6 border border-slate-700">
               <ResultsPage 
                 mockData={
                   history.length > 0 ? {
@@ -126,28 +125,28 @@ export default function Dashboard() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
+            <h2 className="text-2xl font-bold mb-6 text-white">Quick Actions</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Link to="/practice" className="bg-indigo-600 hover:bg-indigo-700 rounded-lg p-6 text-center transition">
-                <p className="font-semibold">Start Practice</p>
+              <Link to="/practice" className="bg-indigo-600 hover:bg-indigo-700 rounded-lg p-6 text-center transition font-semibold text-white">
+                Start Practice
               </Link>
-              <Link to="/ai-practice" className="bg-purple-600 hover:bg-purple-700 rounded-lg p-6 text-center transition">
-                <p className="font-semibold">Race AI Bot</p>
+              <Link to="/ai-practice" className="bg-purple-600 hover:bg-purple-700 rounded-lg p-6 text-center transition font-semibold text-white">
+                Race AI Bot
               </Link>
-              <Link to="/multiplayer" className="bg-slate-800 hover:bg-slate-700 rounded-lg p-6 text-center transition">
-                <p className="font-semibold">Create Room</p>
+              <Link to="/multiplayer" className="bg-slate-700 hover:bg-slate-600 rounded-lg p-6 text-center transition font-semibold text-white border border-slate-600">
+                Create Room
               </Link>
-              <Link to="/multiplayer" className="bg-slate-800 hover:bg-slate-700 rounded-lg p-6 text-center transition">
-                <p className="font-semibold">Join Room</p>
+              <Link to="/multiplayer" className="bg-slate-700 hover:bg-slate-600 rounded-lg p-6 text-center transition font-semibold text-white border border-slate-600">
+                Join Room
               </Link>
-              <Link to="/leaderboard" className="bg-slate-800 hover:bg-slate-700 rounded-lg p-6 text-center transition">
-                <p className="font-semibold">Leaderboard</p>
+              <Link to="/leaderboard" className="bg-slate-700 hover:bg-slate-600 rounded-lg p-6 text-center transition font-semibold text-white border border-slate-600">
+                Leaderboard
               </Link>
             </div>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold mb-6">Recent Games</h2>
+            <h2 className="text-2xl font-bold mb-6 text-white">Recent Games</h2>
             <div className="bg-slate-800 rounded-lg overflow-x-auto">
               <table className="w-full min-w-[600px]">
                 <thead className="bg-slate-700">
@@ -197,8 +196,7 @@ export default function Dashboard() {
               </table>
             </div>
           </section>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

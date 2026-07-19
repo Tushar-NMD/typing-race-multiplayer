@@ -15,12 +15,12 @@ export default function Settings() {
     <div className="min-h-screen bg-slate-900">
       <Navbar isLoggedIn={true} />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 sm:px-6 pt-20 pb-12">
         <Link to="/dashboard" className="inline-flex items-center text-slate-400 hover:text-white transition mb-6">
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Dashboard
         </Link>
-        <h1 className="text-4xl font-bold mb-12">Settings</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-8 sm:mb-12">Settings</h1>
 
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="bg-slate-800 rounded-xl p-6">
@@ -29,7 +29,7 @@ export default function Settings() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-3">Theme</label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <button
                     onClick={() => setSettings({ ...settings, theme: 'dark' })}
                     className={`flex items-center justify-center space-x-2 py-3 rounded-lg transition ${
@@ -62,7 +62,7 @@ export default function Settings() {
 
               <div>
                 <label className="block text-sm font-medium mb-3">Font Size</label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   {['small', 'medium', 'large'].map((size) => (
                     <button
                       key={size}

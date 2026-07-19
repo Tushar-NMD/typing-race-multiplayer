@@ -16,23 +16,34 @@ export function SettingsProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem('appSettings', JSON.stringify(settings));
+  }, [settings]);
 
-    // Apply theme
-    if (settings.theme === 'light') {
-      document.body.classList.add('theme-light');
-      document.body.classList.remove('theme-dark');
-    } else {
-      document.body.classList.add('theme-dark');
-      document.body.classList.remove('theme-light');
+  useEffect(() => {
+    const applyThemeClass = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const effectiveTheme =
+        settings.theme === 'system' ? (prefersDark ? 'dark' : 'light') : settings.theme;
+
+      document.body.classList.toggle('theme-light', effectiveTheme === 'light');
+      document.body.classList.toggle('theme-dark', effectiveTheme === 'dark');
+    };
+
+    applyThemeClass();
+
+    if (settings.theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyThemeClass();
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
+  }, [settings.theme]);
 
-    // Apply font size
+  useEffect(() => {
     let size = '16px';
     if (settings.fontSize === 'small') size = '14px';
     if (settings.fontSize === 'large') size = '18px';
     document.documentElement.style.fontSize = size;
-
-  }, [settings]);
+  }, [settings.fontSize]);
 
   // Audio Context for typing sound
   const playTypingSound = () => {

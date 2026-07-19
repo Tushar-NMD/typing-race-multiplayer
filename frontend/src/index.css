@@ -14,9 +14,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: #030712 !important;
+  color: #e2e8f0;
   overflow-x: hidden;
+}
+
+/* Force inner page wrappers to be transparent so the global background shows through */
+.min-h-screen {
+  background-color: transparent !important;
 }
 
 #root {
@@ -62,11 +67,46 @@ button:focus {
   vertical-align: text-bottom;
 }
 
-/* Light Theme Overrides */
+/* Homepage TYPEVERSE marquee */
+.marquee-viewport {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 14s linear infinite;
+}
+
+.marquee-item {
+  flex-shrink: 0;
+  padding: 0 2rem;
+  white-space: nowrap;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Light Theme Overrides */
 body.theme-light {
   background: #f8fafc !important;
   color: #0f172a !important;
+}
+
+body.theme-light .global-bg {
+  opacity: 0.35;
+}
+
+.theme-light .text-slate-200 {
+  color: #334155 !important;
 }
 
 .theme-light .bg-slate-900,
@@ -94,6 +134,10 @@ body.theme-light.bg-slate-900 {
   background-color: #cbd5e1 !important;
 }
 
+.theme-light .text-white {
+  color: #0f172a !important;
+}
+
 .theme-light .text-slate-400 {
   color: #64748b !important;
 }
@@ -110,11 +154,13 @@ body.theme-light.bg-slate-900 {
   color: #dc2626 !important;
 }
 
-.theme-light .text-indigo-400 {
+.theme-light .text-indigo-400,
+.theme-light .text-indigo-500 {
   color: #4f46e5 !important;
 }
 
-.theme-light .border-slate-700 {
+.theme-light .border-slate-700,
+.theme-light .border-slate-700\/50 {
   border-color: #e2e8f0 !important;
 }
 
@@ -122,26 +168,92 @@ body.theme-light.bg-slate-900 {
   border-color: #cbd5e1 !important;
 }
 
+.theme-light .border-white\/10 {
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.theme-light nav.bg-white\/5,
+.theme-light nav {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .notification-panel,
+.theme-light .notification-panel .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light .notification-panel .text-slate-300 {
+  color: #475569 !important;
+}
+
+.theme-light .notification-panel .text-slate-400,
+.theme-light .notification-panel .text-slate-500 {
+  color: #64748b !important;
+}
+
+.theme-light .notification-panel {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
 .theme-light input,
 .theme-light textarea,
 .theme-light select {
   background-color: #ffffff !important;
   color: #0f172a !important;
+  border-color: #cbd5e1 !important;
 }
 
-.theme-light .bg-slate-800\/50 {
-  background-color: rgba(255, 255, 255, 0.5) !important;
+.theme-light input::placeholder,
+.theme-light textarea::placeholder {
+  color: #94a3b8 !important;
 }
 
-.theme-light .text-white,
+.theme-light .bg-slate-800\/50,
+.theme-light .bg-slate-800\/40 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
 .theme-light .bg-indigo-600,
+.theme-light .bg-indigo-700,
+.theme-light .bg-purple-600,
+.theme-light .bg-purple-700,
 .theme-light .bg-red-600,
+.theme-light .bg-red-700,
 .theme-light .bg-green-600 {
-  color: #ffffff !important; 
+  color: #ffffff !important;
+}
+
+.theme-light .bg-indigo-600 .text-white,
+.theme-light .bg-indigo-600.text-white,
+.theme-light .bg-purple-600 .text-white,
+.theme-light .bg-red-600 .text-white,
+.theme-light .bg-red-600 .text-white,
+.theme-light .bg-green-600 .text-white,
+.theme-light button.bg-indigo-600,
+.theme-light button.bg-red-600 {
+  color: #ffffff !important;
 }
 
 .theme-light .hover\:text-white:hover {
   color: #0f172a !important;
+}
+
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light label,
+.theme-light p,
+.theme-light span,
+.theme-light td,
+.theme-light th {
+  color: inherit;
 }
 
 /* Specific fix for inputs and textareas */
