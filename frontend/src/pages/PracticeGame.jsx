@@ -92,7 +92,7 @@ export default function PracticeGame() {
     return (
       <div className="min-h-screen bg-slate-900">
         <Navbar isLoggedIn={true} />
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 pt-20 pb-16">
           <div className="max-w-2xl mx-auto bg-slate-800 rounded-xl p-8 text-center">
             <h1 className="text-4xl font-bold mb-8">Your Result</h1>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
@@ -148,7 +148,7 @@ export default function PracticeGame() {
     <div className="min-h-screen bg-slate-900">
       <Navbar isLoggedIn={true} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-slate-800 rounded-lg p-4 text-center">

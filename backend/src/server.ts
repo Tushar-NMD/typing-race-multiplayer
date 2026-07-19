@@ -36,24 +36,46 @@ const httpServer = createServer(app);
 // CORS Configuration
 // ======================
 
+const parseOrigins = (value?: string) =>
+  value
+    ?.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean) ?? [];
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'http://65.2.189.126',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://[::1]:5173'
-].filter(Boolean) as string[];
+  ...parseOrigins(process.env.FRONTEND_URL),
+  ...parseOrigins(process.env.CORS_ORIGINS),
+];
+
+if (process.env.NODE_ENV !== 'production') {
+  const devOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://[::1]:5173',
+  ];
+
+  devOrigins.forEach((origin) => {
+    if (!allowedOrigins.includes(origin)) {
+      allowedOrigins.push(origin);
+    }
+  });
+}
 
 const isDevOriginAllowed = (origin: string) =>
   process.env.NODE_ENV !== 'production' &&
-  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(origin);
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(
+    origin
+  );
+
+const isOriginAllowed = (origin: string | undefined) =>
+  !origin || allowedOrigins.includes(origin) || isDevOriginAllowed(origin);
 
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    if (!origin || allowedOrigins.includes(origin) || isDevOriginAllowed(origin)) {
+    if (isOriginAllowed(origin)) {
       callback(null, true);
     } else {
       callback(new Error('CORS not allowed'));
@@ -71,7 +93,7 @@ app.use(express.urlencoded({ extended: true }));
 const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin) || isDevOriginAllowed(origin)) {
+      if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
         callback(new Error('CORS not allowed'));

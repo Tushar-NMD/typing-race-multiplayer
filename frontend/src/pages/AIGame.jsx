@@ -189,7 +189,7 @@ export default function AIGame() {
     return (
       <div className="min-h-screen bg-slate-900">
         <Navbar isLoggedIn={true} />
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 pt-20 pb-16">
           <div className="max-w-2xl mx-auto bg-slate-800 rounded-xl p-8 text-center shadow-2xl border border-indigo-500/20">
             <h1 className="text-4xl font-bold mb-2">Race Finished!</h1>
             <h2 className={`text-2xl font-bold mb-8 ${playerWon ? 'text-green-500' : 'text-red-500'}`}>
@@ -284,7 +284,7 @@ export default function AIGame() {
     <div className="min-h-screen bg-slate-900">
       <Navbar isLoggedIn={true} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="max-w-4xl mx-auto">
           
           {/* Progress Bars */}
