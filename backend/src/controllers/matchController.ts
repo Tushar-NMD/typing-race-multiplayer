@@ -195,6 +195,8 @@ export const getLeaderboard = async (req: any, res: Response) => {
     // Group by user and calculate stats
     const playerStats = new Map();
     leaderboard.forEach((result: any) => {
+      if (!result.userId) return; // Skip results where the user has been deleted
+
       const userId = (result.userId as any)._id.toString();
       if (!playerStats.has(userId)) {
         playerStats.set(userId, {
