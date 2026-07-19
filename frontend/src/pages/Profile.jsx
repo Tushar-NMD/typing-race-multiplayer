@@ -86,14 +86,14 @@ export default function Profile() {
           )}
 
           <div className="bg-slate-800 rounded-xl p-8 mb-8">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center space-x-6">
-                <div className="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 mb-6">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-4 sm:space-y-0 sm:space-x-6">
+                <div className="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <User size={48} />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{profileUser?.name}</h1>
-                  <p className="text-slate-400">@{profileUser?.username}</p>
+                  <h1 className="text-3xl font-bold mb-2 break-all">{profileUser?.name}</h1>
+                  <p className="text-slate-400 break-all">@{profileUser?.username}</p>
                   <p className="text-sm text-slate-500 mt-1">
                     Joined {profileUser?.createdAt ? formatDate(profileUser.createdAt) : 'Unknown'}
                   </p>
@@ -101,7 +101,7 @@ export default function Profile() {
               </div>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
+                className="flex items-center justify-center space-x-2 px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-700 transition w-full sm:w-auto flex-shrink-0"
               >
                 <Edit2 size={16} />
                 <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
@@ -139,7 +139,7 @@ export default function Profile() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6 mb-8">
             <div className="bg-slate-800 rounded-lg p-6 text-center shadow-lg">
               <p className="text-slate-400 text-sm mb-2">Highest WPM</p>
               <p className="text-3xl font-bold text-green-500">{profileUser?.highestWPM || 0}</p>
