@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { TrendingUp, Trophy, Globe, Target, Bot, ChevronRight, Keyboard, Sparkles, Activity } from 'lucide-react';
+import { TrendingUp, Trophy, Globe, Target, Bot, ChevronRight, Keyboard, Activity, Zap } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 
@@ -22,19 +22,15 @@ export default function Landing() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-        
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-indigo-300 font-medium text-sm mb-8 shadow-[0_0_20px_rgba(79,70,229,0.2)]">
-          <Sparkles size={16} className="text-indigo-400 animate-pulse" />
-          <span className="tracking-wide uppercase text-xs font-bold">The Next Evolution of Typing</span>
-        </div>
+      <section className="relative pt-28 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[min(90vw,36rem)] h-48 bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none" />
 
-        <h1 className="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto mb-6 marquee-viewport">
+        <h1 className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto mb-5 marquee-viewport">
           <div className="marquee-track">
             {[0, 1, 2, 3].map((i) => (
               <span
                 key={i}
-                className="marquee-item text-3xl sm:text-4xl md:text-5xl font-black tracking-[0.2em] bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent"
+                className="marquee-item text-3xl sm:text-4xl md:text-5xl font-black tracking-[0.2em] bg-gradient-to-b from-white via-indigo-100 to-indigo-400/60 bg-clip-text text-transparent"
               >
                 TYPEVERSE
               </span>
@@ -42,28 +38,57 @@ export default function Landing() {
           </div>
         </h1>
         
-        <p className="text-xl sm:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-          Elevate your keystrokes. Compete globally in real-time, conquer the AI ghost, and ascend the ranks in a visually stunning typing arena.
+        <p className="relative text-lg sm:text-xl text-slate-400/90 mb-14 max-w-2xl mx-auto font-light leading-relaxed">
+          Compete in real-time, outrun the ghost AI, and climb global ranks in a typing arena built for speed.
         </p>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-6 items-center w-full sm:w-auto z-10">
-          <Link
-            to="/ai-practice"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-black rounded-full text-lg font-bold hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_0_60px_-15px_rgba(255,255,255,0.8)] overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <Bot size={24} className="relative z-10" />
-            <span className="relative z-10">Race Ghost AI</span>
+        <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 w-full max-w-3xl z-10">
+          <Link to="/ai-practice" className="hero-glass-cta hero-glass-cta-ai group">
+            <span className="hero-glass-cta-shimmer" aria-hidden="true" />
+            <span className="hero-glass-cta-glow hero-glass-cta-glow-ai" aria-hidden="true" />
+            <span className="hero-glass-cta-inner">
+              <span className="hero-glass-cta-icon hero-glass-cta-icon-ai">
+                <Bot size={26} />
+              </span>
+              <span className="hero-glass-cta-copy">
+                <span className="hero-glass-cta-title">Race Ghost AI</span>
+                <span className="hero-glass-cta-sub">Adaptive neural rival · live WPM duel</span>
+              </span>
+              <ChevronRight size={20} className="hero-glass-cta-arrow text-purple-300/70 group-hover:text-purple-200 group-hover:translate-x-1 transition-all" />
+            </span>
           </Link>
 
-          <Link
-            to="/multiplayer"
-            className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-full text-lg font-bold hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 shadow-[0_0_30px_-10px_rgba(0,0,0,0.5)]"
-          >
-            <Globe size={24} className="text-indigo-400 group-hover:text-indigo-300 transition-colors" />
-            <span>Multiplayer Race</span>
-            <ChevronRight size={20} className="text-slate-400 group-hover:translate-x-1 group-hover:text-white transition-all" />
+          <Link to="/multiplayer" className="hero-glass-cta hero-glass-cta-mp group">
+            <span className="hero-glass-cta-shimmer" aria-hidden="true" />
+            <span className="hero-glass-cta-glow hero-glass-cta-glow-mp" aria-hidden="true" />
+            <span className="hero-glass-cta-inner">
+              <span className="hero-glass-cta-icon hero-glass-cta-icon-mp">
+                <Globe size={26} />
+              </span>
+              <span className="hero-glass-cta-copy">
+                <span className="hero-glass-cta-title">Multiplayer Race</span>
+                <span className="hero-glass-cta-sub">Zero-lag rooms · global matchmaking</span>
+              </span>
+              <ChevronRight size={20} className="hero-glass-cta-arrow text-cyan-300/70 group-hover:text-cyan-200 group-hover:translate-x-1 transition-all" />
+            </span>
           </Link>
+        </div>
+
+        <div className="relative mt-10 flex flex-wrap items-center justify-center gap-6 text-xs sm:text-sm text-slate-500">
+          <span className="inline-flex items-center gap-2">
+            <Zap size={14} className="text-indigo-400" />
+            Real-time sync
+          </span>
+          <span className="hidden sm:inline w-px h-4 bg-white/10" />
+          <span className="inline-flex items-center gap-2">
+            <Activity size={14} className="text-purple-400" />
+            Live analytics
+          </span>
+          <span className="hidden sm:inline w-px h-4 bg-white/10" />
+          <span className="inline-flex items-center gap-2">
+            <Trophy size={14} className="text-amber-400" />
+            Ranked ladders
+          </span>
         </div>
         
         {/* Floating UI Elements / Dashboard Preview Concept */}

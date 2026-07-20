@@ -95,6 +95,148 @@ button:focus {
   }
 }
 
+/* Homepage hero glass CTAs */
+.hero-glass-cta {
+  position: relative;
+  display: block;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.35s ease;
+}
+
+.hero-glass-cta:hover {
+  transform: translateY(-3px);
+}
+
+.hero-glass-cta-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.hero-glass-cta:hover .hero-glass-cta-shimmer {
+  transform: translateX(120%);
+}
+
+.hero-glass-cta-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  opacity: 0.55;
+  filter: blur(14px);
+  transition: opacity 0.35s ease, filter 0.35s ease;
+  pointer-events: none;
+}
+
+.hero-glass-cta:hover .hero-glass-cta-glow {
+  opacity: 1;
+  filter: blur(20px);
+}
+
+.hero-glass-cta-glow-ai {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.7), rgba(99, 102, 241, 0.5));
+}
+
+.hero-glass-cta-glow-mp {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.6), rgba(59, 130, 246, 0.5));
+}
+
+.hero-glass-cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: calc(1rem - 1px);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.hero-glass-cta-ai:hover .hero-glass-cta-inner {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(192, 132, 252, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 40px rgba(168, 85, 247, 0.25),
+    0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.hero-glass-cta-mp:hover .hero-glass-cta-inner {
+  background: rgba(34, 211, 238, 0.06);
+  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 40px rgba(34, 211, 238, 0.22),
+    0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.hero-glass-cta-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.hero-glass-cta-ai:hover .hero-glass-cta-icon-ai {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.45);
+  color: #e9d5ff;
+}
+
+.hero-glass-cta-mp:hover .hero-glass-cta-icon-mp {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.4);
+  color: #a5f3fc;
+}
+
+.hero-glass-cta-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.2rem;
+}
+
+.hero-glass-cta-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: 0.01em;
+}
+
+.hero-glass-cta-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.hero-glass-cta-arrow {
+  flex-shrink: 0;
+}
+
 /* Light Theme Overrides */
 body.theme-light {
   background: #f8fafc !important;
