@@ -17,8 +17,8 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-white/5 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 overflow-x-hidden">
-        <div className="flex items-center justify-between h-14 sm:h-16 min-w-0">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16 w-full min-w-0">
           <div className="flex items-center gap-2 sm:gap-8 min-w-0">
             <Link to="/" className="text-lg sm:text-2xl font-bold text-indigo-500 whitespace-nowrap shrink-0">
               TYPEVERSE
