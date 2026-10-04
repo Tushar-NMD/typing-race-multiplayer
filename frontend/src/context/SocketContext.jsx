@@ -30,7 +30,7 @@ export const SocketProvider = ({ children }) => {
 
     // Create socket connection
     const token = localStorage.getItem('token');
-    const newSocket = io(import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000', {
+    const newSocket = io(import.meta.env.VITE_API_URL?.replace('/api', ''), {
       auth: { token },
       transports: ['websocket', 'polling']
     });

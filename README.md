@@ -122,8 +122,7 @@ npm install
 
 Create a `.env` file in the `frontend` directory:
 \`\`\`env
-VITE_API_URL=http://localhost:5000/api
-VITE_SOCKET_URL=http://localhost:5000
+VITE_API_URL=https://typing-race-multiplayer.onrender.com/api
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
 \`\`\`
 
