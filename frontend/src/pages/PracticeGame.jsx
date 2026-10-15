@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ResultChart from '../components/ResultChart';
 import { useSettings } from '../context/SettingsContext';
 import { matchService } from '../services/matchService';
 import { getRandomParagraph } from '../utils/typingParagraphs';
+import { Clock, Flame, Target, AlertCircle, RotateCcw, LayoutDashboard, Sparkles, Trophy } from 'lucide-react';
 
 export default function PracticeGame() {
   const navigate = useNavigate();
   const location = useLocation();
   const { playTypingSound } = useSettings();
   const settings = location.state || { time: 60, difficulty: 'medium', language: 'english' };
-  const [sampleText, setSampleText] = useState(() => getRandomParagraph(settings.language, settings.time));
+  const [sampleText, setSampleText] = useState(() => {
+    if (settings.customText && settings.customText.trim()) {
+      return settings.customText.trim();
+    }
+    return getRandomParagraph(settings.language, settings.time);
+  });
 
   const [timeLeft, setTimeLeft] = useState(settings.time);
   const [input, setInput] = useState('');
@@ -41,7 +47,6 @@ export default function PracticeGame() {
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !finished) {
       setFinished(true);
-      // Save practice result to backend
       matchService.savePracticeResult({
         wpm: statsRef.current.wpm,
         accuracy: statsRef.current.accuracy,
@@ -52,7 +57,7 @@ export default function PracticeGame() {
 
   useEffect(() => {
     if (input.length > 0) {
-      const words = input.trim().split(' ').length;
+      const words = input.trim().split(/\s+/).length;
       const minutes = (settings.time - timeLeft) / 60;
       const calculatedWpm = minutes > 0 ? Math.round(words / minutes) : 0;
       setWpm(calculatedWpm);
@@ -65,11 +70,10 @@ export default function PracticeGame() {
       setAccuracy(calculatedAccuracy);
       setMistakes(input.length - correct);
     }
-  }, [input, timeLeft, settings.time]);
+  }, [input, timeLeft, settings.time, sampleText]);
 
   const handleInputChange = (e) => {
     if (!started) setStarted(true);
-    // Play sound if input increased (a character was typed)
     if (e.target.value.length > input.length) {
       playTypingSound();
     }
@@ -85,36 +89,63 @@ export default function PracticeGame() {
     setAccuracy(100);
     setMistakes(0);
     setChartData({ time: [], wpm: [], raw: [] });
-    setSampleText(getRandomParagraph(settings.language, settings.time));
+    if (settings.customText && settings.customText.trim()) {
+      setSampleText(settings.customText.trim());
+    } else {
+      setSampleText(getRandomParagraph(settings.language, settings.time));
+    }
   };
 
   if (finished) {
     return (
-      <div className="min-h-screen bg-slate-900">
-        <Navbar isLoggedIn={true} />
-        <div className="container mx-auto px-4 pt-20 pb-16">
-          <div className="max-w-2xl mx-auto bg-slate-800 rounded-xl p-8 text-center">
-            <h1 className="text-4xl font-bold mb-8">Your Result</h1>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">WPM</p>
-                <p className="text-3xl font-bold text-indigo-500">{wpm}</p>
+      <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
+        <Navbar />
+
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+          <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-10 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] text-center">
+            <div className="w-16 h-16 rounded-3xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center mx-auto mb-4 text-amber-300">
+              <Trophy size={32} />
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl font-black font-display text-white mb-2">Practice Completed</h1>
+            <p className="text-xs sm:text-sm text-slate-400 font-mono mb-8">Performance telemetry successfully recorded to profile archive</p>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 font-mono mb-8">
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1 flex items-center justify-center gap-1">
+                  <Flame size={12} className="text-amber-400" /> Speed
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-amber-300">{wpm}</p>
+                <span className="text-[10px] text-slate-500 font-normal">WPM</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Accuracy</p>
-                <p className="text-3xl font-bold text-green-500">{accuracy}%</p>
+
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1 flex items-center justify-center gap-1">
+                  <Target size={12} className="text-emerald-400" /> Accuracy
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-emerald-400">{accuracy}%</p>
+                <span className="text-[10px] text-slate-500 font-normal">Precision</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Mistakes</p>
-                <p className="text-3xl font-bold text-red-500">{mistakes}</p>
+
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1 flex items-center justify-center gap-1">
+                  <AlertCircle size={12} className="text-rose-400" /> Flaws
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-rose-400">{mistakes}</p>
+                <span className="text-[10px] text-slate-500 font-normal">Misses</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Time</p>
-                <p className="text-3xl font-bold">{settings.time}s</p>
+
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1 flex items-center justify-center gap-1">
+                  <Clock size={12} className="text-indigo-400" /> Duration
+                </p>
+                <p className="text-2xl sm:text-3xl font-black text-white">{settings.time}s</p>
+                <span className="text-[10px] text-slate-500 font-normal">Elapsed</span>
               </div>
             </div>
             
-            <div className="mb-8 bg-slate-700/30 rounded-xl p-4">
+            <div className="mb-8 rounded-2xl bg-white/[0.02] border border-white/5 p-4">
               <ResultChart data={{
                 series1Name: 'WPM',
                 series2Name: 'Accuracy (%)',
@@ -124,18 +155,23 @@ export default function PracticeGame() {
               }} />
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row gap-3 font-mono">
               <button
+                type="button"
                 onClick={handleRestart}
-                className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+                className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Restart
+                <RotateCcw size={15} />
+                <span>Restart Session</span>
               </button>
+
               <button
+                type="button"
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 py-3 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 transition"
+                className="flex-1 py-3.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Dashboard
+                <LayoutDashboard size={15} />
+                <span>Return to Dashboard</span>
               </button>
             </div>
           </div>
@@ -145,68 +181,81 @@ export default function PracticeGame() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <Navbar isLoggedIn={true} />
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+      {/* Specular Ambient Glows */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
+      <Navbar />
 
-      <div className="container mx-auto px-4 pt-20 pb-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Time Left</p>
-              <p className="text-2xl font-bold">{timeLeft}s</p>
-            </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Current WPM</p>
-              <p className="text-2xl font-bold text-indigo-500">{wpm}</p>
-            </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Accuracy</p>
-              <p className="text-2xl font-bold text-green-500">{accuracy}%</p>
-            </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Mistakes</p>
-              <p className="text-2xl font-bold text-red-500">{mistakes}</p>
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+        {/* Real-time Telemetry Status Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 font-mono">
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase flex items-center justify-center gap-1 mb-1">
+              <Clock size={12} className="text-cyan-400" /> Remaining
+            </span>
+            <span className="text-2xl font-black text-white">{timeLeft}s</span>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-8 mb-6">
-            <p className="text-2xl leading-relaxed mb-6 font-mono relative">
-              {sampleText.split('').map((char, index) => {
-                let color = 'text-slate-500';
-                if (index < input.length) {
-                  color = input[index] === char ? 'text-green-500' : 'text-red-500';
-                }
-                const isCursor = index === input.length;
-                return (
-                  <span key={index} className="relative">
-                    {isCursor && (
-                      <span
-                        className="cursor-blink absolute -left-0.5 top-0 bottom-0"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <span className={color}>{char}</span>
-                  </span>
-                );
-              })}
-              {/* Cursor at very end */}
-              {input.length === sampleText.length && (
-                <span className="cursor-blink ml-0.5" style={{height: '1.25em'}} aria-hidden="true" />
-              )}
-            </p>
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase flex items-center justify-center gap-1 mb-1">
+              <Flame size={12} className="text-amber-400" /> Current Speed
+            </span>
+            <span className="text-2xl font-black text-amber-300">{wpm} <span className="text-xs font-normal text-slate-500">WPM</span></span>
           </div>
 
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={handleInputChange}
-            disabled={finished}
-            placeholder="Start typing here..."
-            className="w-full px-6 py-4 bg-slate-800 border-2 border-slate-600 rounded-xl focus:outline-none focus:border-indigo-500 text-xl font-mono resize-none"
-            rows="4"
-            autoFocus
-          />
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase flex items-center justify-center gap-1 mb-1">
+              <Target size={12} className="text-emerald-400" /> Accuracy
+            </span>
+            <span className="text-2xl font-black text-emerald-400">{accuracy}%</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase flex items-center justify-center gap-1 mb-1">
+              <AlertCircle size={12} className="text-rose-400" /> Mistakes
+            </span>
+            <span className="text-2xl font-black text-rose-400">{mistakes}</span>
+          </div>
         </div>
+
+        {/* Text Prompt Target Card */}
+        <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-8 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] mb-6">
+          <p className="text-xl sm:text-2xl leading-relaxed font-mono relative select-none">
+            {sampleText.split('').map((char, index) => {
+              let color = 'text-slate-500';
+              if (index < input.length) {
+                color = input[index] === char ? 'text-emerald-400 font-semibold' : 'text-rose-400 bg-rose-500/20 rounded';
+              }
+              const isCursor = index === input.length;
+              return (
+                <span key={index} className="relative">
+                  {isCursor && (
+                    <span
+                      className="cursor-blink absolute -left-0.5 top-0 bottom-0 bg-indigo-400 w-0.5"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className={color}>{char}</span>
+                </span>
+              );
+            })}
+            {input.length === sampleText.length && (
+              <span className="cursor-blink ml-0.5 bg-indigo-400 w-0.5 inline-block" style={{ height: '1.25em' }} aria-hidden="true" />
+            )}
+          </p>
+        </div>
+
+        {/* Keystroke Receiver */}
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={handleInputChange}
+          disabled={finished}
+          placeholder="Start typing prompt text above to trigger live telemetry..."
+          className="w-full px-6 py-4 rounded-2xl bg-white/[0.04] border border-white/15 focus:outline-none focus:border-indigo-400/60 focus:bg-white/[0.07] text-white font-mono text-lg sm:text-xl resize-none backdrop-blur-md transition-all shadow-xl"
+          rows={3}
+          autoFocus
+        />
       </div>
     </div>
   );

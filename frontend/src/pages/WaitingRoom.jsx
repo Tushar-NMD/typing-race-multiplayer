@@ -283,157 +283,180 @@ export default function WaitingRoom() {
   // Loading screen
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center relative selection:bg-indigo-500/30">
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-cyan-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading room...</p>
+          <div className="w-12 h-12 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mx-auto mb-4" />
+          <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">Connecting to Room Stream...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+      {/* Specular Ambient Glows */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[85vw] max-w-4xl h-[420px] bg-cyan-600/15 blur-[150px] pointer-events-none rounded-full -z-10" />
+      <div className="fixed bottom-0 right-10 w-[35vw] h-[350px] bg-indigo-600/10 blur-[150px] pointer-events-none rounded-full -z-10" />
+
       <Navbar />
 
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-lg text-red-500">
-              {error}
-            </div>
-          )}
-
-          {/* Room Info */}
-          <div className="bg-slate-800 rounded-xl p-8 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-slate-400 text-sm mb-1">Room Code</p>
-                <p className="text-3xl font-bold tracking-wider">{roomCode}</p>
-                <p className="text-slate-400 text-sm mt-2">{room?.name}</p>
-                {isHost && (
-                  <span className="inline-block mt-2 px-3 py-1 bg-yellow-500/20 text-yellow-500 text-xs rounded-full border border-yellow-500">
-                    👑 You are the Host
-                  </span>
-                )}
-              </div>
-              <div className="text-right">
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
-                >
-                  {copied ? <Check size={20} /> : <Copy size={20} />}
-                  <span>{copied ? 'Copied!' : 'Copy Invite'}</span>
-                </button>
-                <p className="text-slate-400 text-sm mt-2">
-                  {room?.duration}s • {room?.language}
-                </p>
-              </div>
-            </div>
-            <div className="bg-slate-700 rounded-lg p-3">
-              <p className="text-sm text-slate-300 truncate">{inviteLink}</p>
-            </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+        {error && (
+          <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs sm:text-sm font-mono flex items-center gap-2">
+            <span>{error}</span>
           </div>
+        )}
 
-          {/* Players List */}
-          <div className="bg-slate-800 rounded-xl p-8 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center">
-                <Users className="mr-2" size={24} />
-                Players ({players.length}/{room?.maxPlayers})
-              </h2>
-              {!connected && (
-                <span className="text-yellow-500 text-sm">
-                  🔄 Reconnecting...
+        {/* Room Header Info Card */}
+        <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-8 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono uppercase mb-2">
+                <Users size={12} className="text-cyan-400" />
+                Live Scrim Room
+              </div>
+              <p className="text-xs text-slate-400 font-mono">Room Pass Code</p>
+              <h1 className="text-3xl sm:text-4xl font-black font-mono tracking-widest text-white mt-0.5">
+                {roomCode}
+              </h1>
+              {isHost && (
+                <span className="inline-flex items-center gap-1 mt-2.5 px-3 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-mono font-bold">
+                  <Crown size={12} /> You are Room Host
                 </span>
               )}
             </div>
-            
-            <div className="space-y-4">
-              {players.map((player, index) => {
-                const hostId = getHostId();
-                const userId = getUserId();
-                const playerIsHost = player.userId === hostId || player.userId?._id === hostId;
-                const isCurrentUser = player.userId === userId;
-                
-                return (
-                  <div
-                    key={player.userId || index}
-                    className="flex items-center justify-between bg-slate-700 rounded-lg p-4"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-3 h-3 rounded-full ${
-                        player.ready ? 'bg-green-500' : 'bg-yellow-500'
-                      }`} />
-                      <span className="font-semibold flex items-center">
-                        {player.username}
-                        {playerIsHost && (
-                          <Crown className="ml-2 text-yellow-500" size={16} />
-                        )}
-                        {isCurrentUser && (
-                          <span className="ml-2 text-xs bg-indigo-600 px-2 py-1 rounded">YOU</span>
-                        )}
-                      </span>
-                    </div>
-                    <span className={`text-sm font-semibold ${
-                      player.ready ? 'text-green-500' : 'text-yellow-500'
-                    }`}>
-                      {player.ready ? '✓ Ready' : '⏳ Not Ready'}
-                    </span>
-                  </div>
-                );
-              })}
-              
-              {/* Empty slots */}
-              {Array.from({ length: room?.maxPlayers - players.length }).map((_, index) => (
-                <div
-                  key={`empty-${index}`}
-                  className="flex items-center justify-between bg-slate-700/50 rounded-lg p-4 opacity-50"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-3 h-3 rounded-full bg-slate-500" />
-                    <span className="text-slate-400">Waiting for player...</span>
-                  </div>
-                </div>
-              ))}
+
+            <div className="sm:text-right flex flex-col sm:items-end">
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-mono text-xs transition-all cursor-pointer shadow-sm"
+              >
+                {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-cyan-400" />}
+                <span>{copied ? 'Link Copied!' : 'Copy Invite Link'}</span>
+              </button>
+              <p className="text-xs text-slate-400 font-mono mt-2">
+                Sprint: {room?.duration}s · Language: {room?.language}
+              </p>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4">
-            <button
-              onClick={handleLeave}
-              className="flex-1 py-4 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 transition"
-            >
-              Leave Room
-            </button>
-            
-            {/* Host can also toggle ready */}
-            <button
-              onClick={handleToggleReady}
-              className={`flex-1 py-4 rounded-lg font-semibold transition ${
-                ready 
-                  ? 'bg-green-600 hover:bg-green-700 text-white' 
-                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-              }`}
-            >
-              {ready ? '✓ Ready!' : 'Mark Ready'}
-            </button>
+          <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 font-mono text-xs text-slate-400 truncate">
+            {inviteLink}
+          </div>
+        </div>
 
-            {isHost && (
-              <button
-                onClick={handleStart}
-                disabled={!canStart || players.length < 2}
-                className="flex-1 py-4 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {players.length < 2 
-                  ? 'Need 2+ Players' 
-                  : !canStart 
-                    ? `Waiting for Ready (${players.filter(p => p.ready).length}/${players.length})`
-                    : '🎮 Start Game'}
-              </button>
+        {/* Players List Card */}
+        <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-8 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold font-display text-white flex items-center gap-2.5">
+              <Users size={20} className="text-cyan-400" />
+              <span>Contenders ({players.length}/{room?.maxPlayers || 4})</span>
+            </h2>
+            {!connected && (
+              <span className="text-amber-400 text-xs font-mono animate-pulse">
+                Reconnecting socket...
+              </span>
             )}
           </div>
+          
+          <div className="space-y-3 font-mono">
+            {players.map((player, index) => {
+              const hostId = getHostId();
+              const userId = getUserId();
+              const playerIsHost = player.userId === hostId || player.userId?._id === hostId;
+              const isCurrentUser = player.userId === userId;
+              
+              return (
+                <div
+                  key={player.userId || index}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center font-display font-bold text-white">
+                      {player.username?.[0]?.toUpperCase() || 'P'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 font-bold text-sm text-white">
+                        <span>{player.username}</span>
+                        {playerIsHost && (
+                          <Crown size={14} className="text-amber-400 fill-amber-400" />
+                        )}
+                        {isCurrentUser && (
+                          <span className="text-[10px] bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 px-1.5 py-0.2 rounded">
+                            YOU
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                    player.ready 
+                      ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' 
+                      : 'bg-amber-500/15 border border-amber-500/30 text-amber-300'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${player.ready ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                    {player.ready ? 'Ready' : 'Not Ready'}
+                  </span>
+                </div>
+              );
+            })}
+            
+            {/* Empty slots */}
+            {Array.from({ length: Math.max(0, (room?.maxPlayers || 4) - players.length) }).map((_, index) => (
+              <div
+                key={`empty-${index}`}
+                className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.01] border border-dashed border-white/5 opacity-50"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl border border-dashed border-white/10 flex items-center justify-center text-slate-600 text-xs">
+                    ?
+                  </div>
+                  <span className="text-xs text-slate-500">Waiting for racer to connect...</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex flex-col sm:flex-row gap-3 font-mono">
+          <button
+            type="button"
+            onClick={handleLeave}
+            className="flex-1 py-3.5 rounded-2xl bg-white/[0.04] hover:bg-rose-500/15 border border-white/10 hover:border-rose-500/30 text-slate-400 hover:text-rose-300 font-semibold text-xs transition-all cursor-pointer"
+          >
+            Leave Room
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleToggleReady}
+            className={`flex-1 py-3.5 rounded-2xl font-bold text-xs transition-all cursor-pointer border ${
+              ready 
+                ? 'bg-emerald-500/20 border-emerald-400/50 text-emerald-300 shadow-md shadow-emerald-500/10' 
+                : 'bg-amber-500/20 border-amber-400/50 text-amber-300 shadow-md shadow-amber-500/10'
+            }`}
+          >
+            {ready ? '✓ Locked In Ready' : 'Mark Ready to Race'}
+          </button>
+
+          {isHost && (
+            <button
+              type="button"
+              onClick={handleStart}
+              disabled={!canStart || players.length < 2}
+              className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {players.length < 2 
+                ? 'Need 2+ Players' 
+                : !canStart 
+                  ? `Waiting (${players.filter(p => p.ready).length}/${players.length} Ready)`
+                  : 'Start Match'}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -18,6 +18,7 @@ import Settings from './pages/Settings';
 import About from './pages/About';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotificationContainer from './components/NotificationContainer';
+import AuthModal from './components/AuthModal';
 
 const GlobalBackground = () => (
   <>
@@ -37,11 +38,14 @@ function App() {
       <div className="font-sans selection:bg-indigo-500/30 text-slate-200 min-h-screen">
         <GlobalBackground />
         <NotificationContainer />
+        <AuthModal />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Navigate to="/?auth=login" replace />} />
+          <Route path="/signin" element={<Navigate to="/?auth=login" replace />} />
+          <Route path="/signup" element={<Navigate to="/?auth=signup" replace />} />
+          <Route path="/register" element={<Navigate to="/?auth=signup" replace />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           
           {/* Protected Routes */}

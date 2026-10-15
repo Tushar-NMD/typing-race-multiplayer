@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#030712" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="45%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+
+    <!-- Emblem Glowing Gradient -->
+    <linearGradient id="keyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+
+    <!-- Neon Glow Filter -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Container -->
+  <rect x="6" y="6" width="116" height="116" rx="28" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="4" />
+
+  <!-- Subtle Inner Specular Highlight -->
+  <rect x="9" y="9" width="110" height="110" rx="25" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5" />
+
+  <!-- Ambient Internal Glow behind emblem -->
+  <circle cx="64" cy="64" r="32" fill="#6366f1" opacity="0.25" filter="blur(16px)" />
+
+  <!-- TypeVerse Mechanical Switch / Stylized 'T' + 'V' Keycap Logo -->
+  <g filter="url(#neonGlow)">
+    <!-- Keyboard Keycap Outline Frame -->
+    <path 
+      d="M36 40 C36 34, 40 30, 46 30 L82 30 C88 30, 92 34, 92 40 L92 88 C92 94, 88 98, 82 98 L46 98 C40 98, 36 94, 36 88 Z" 
+      fill="rgba(255, 255, 255, 0.04)" 
+      stroke="url(#keyGrad)" 
+      stroke-width="2.5" 
+    />
+
+    <!-- Keyboard Key Cap Top Inset -->
+    <path 
+      d="M44 42 L84 42 L80 84 L48 84 Z" 
+      fill="rgba(99, 102, 241, 0.08)" 
+      stroke="rgba(255, 255, 255, 0.15)" 
+      stroke-width="1.2" 
+    />
+
+    <!-- Stylized 'T' Bar (Speed Keystroke Header) -->
+    <path 
+      d="M50 49 L78 49 C80 49, 81 50, 81 52 L81 54 C81 56, 80 57, 78 57 L50 57 C48 57, 47 56, 47 54 L47 52 C47 50, 48 49, 50 49 Z" 
+      fill="#38bdf8" 
+    />
+
+    <!-- Speed Chevron / 'V' Stem of TypeVerse -->
+    <path 
+      d="M60 57 L68 57 L66 72 L64 78 L62 72 Z" 
+      fill="url(#keyGrad)" 
+    />
+
+    <!-- Apex Lightning Strike / Speed Burst Accent -->
+    <path 
+      d="M64 62 L74 74 L65 74 L68 83 L55 71 L63 71 Z" 
+      fill="#a855f7" 
+      opacity="0.95"
+    />
+
+    <!-- Horizontal Mechanical Accent Pips -->
+    <circle cx="52" cy="90" r="2" fill="#38bdf8" />
+    <circle cx="64" cy="90" r="2" fill="#818cf8" />
+    <circle cx="76" cy="90" r="2" fill="#c084fc" />
+  </g>
+</svg>

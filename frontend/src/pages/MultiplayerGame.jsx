@@ -7,6 +7,23 @@ import { useSettings } from '../context/SettingsContext';
 import ResultChart from '../components/ResultChart';
 import { getRandomParagraph, calculateWPM, calculateAccuracy } from '../utils/typingParagraphs';
 import { roomService } from '../services/roomService';
+import {
+  Trophy,
+  Zap,
+  Target,
+  Clock,
+  ArrowRight,
+  RotateCcw,
+  LayoutDashboard,
+  Users,
+  AlertCircle,
+  CheckCircle2,
+  Crown,
+  Medal,
+  Flag,
+  Sparkles,
+  WifiOff
+} from 'lucide-react';
 
 export default function MultiplayerGame() {
   const navigate = useNavigate();
@@ -238,184 +255,262 @@ export default function MultiplayerGame() {
   // Results screen
   if (showResults) {
     return (
-      <div className="min-h-screen bg-slate-900">
+      <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+        {/* Ambient background glow */}
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
         <Navbar />
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto">
-            {/* Results Header */}
-            <div className="text-center mb-12">
-              <div className="text-8xl mb-4">🏆</div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 bg-clip-text text-transparent mb-2">
-                Race Complete!
-              </h1>
-              <p className="text-slate-400 text-lg">Final standings</p>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-mono font-medium mb-4">
+              <Trophy className="w-3.5 h-3.5" />
+              <span>MATCH CONCLUDED</span>
             </div>
-            
-            {/* Results Cards */}
-            <div className="space-y-4 mb-8">
-              {results.length > 0 ? (
-                results.map((result, index) => (
+            <h1 className="text-4xl sm:text-5xl font-black font-display tracking-tight text-white mb-3">
+              Race Podium
+            </h1>
+            <p className="text-sm sm:text-base text-slate-400 font-mono">
+              Final verified standings for Room <span className="text-indigo-400 font-bold">#{roomCode}</span>
+            </p>
+          </div>
+          
+          {/* Results Cards List */}
+          <div className="space-y-4 mb-10">
+            {results.length > 0 ? (
+              results.map((result, index) => {
+                const isCurrentUser = result.userId === user?.id || result.userId === user?._id;
+                const isWinner = index === 0;
+
+                return (
                   <div
                     key={result.userId}
-                    className={`bg-slate-800 rounded-xl p-6 transition-all duration-300 ${
-                      index === 0
-                        ? 'border-2 border-yellow-500 shadow-xl shadow-yellow-500/20 scale-105'
-                        : 'border border-slate-700'
-                    } ${
-                      result.userId === user?.id || result.userId === user?._id ? 'ring-2 ring-indigo-500' : ''
+                    className={`rounded-3xl backdrop-blur-2xl p-5 sm:p-6 transition-all duration-300 relative overflow-hidden ${
+                      isWinner
+                        ? 'bg-amber-500/[0.08] border-2 border-amber-400/50 shadow-[0_0_40px_rgba(245,158,11,0.2)]'
+                        : isCurrentUser
+                        ? 'bg-slate-900/60 border-2 border-indigo-500/60 shadow-[0_0_30px_rgba(99,102,241,0.15)]'
+                        : 'bg-slate-900/40 border border-white/10 hover:border-white/20'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      {/* Rank and User Info */}
-                      <div className="flex items-center space-x-6">
+                    {isWinner && (
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/15 blur-2xl pointer-events-none rounded-full" />
+                    )}
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      {/* Left: Rank & User */}
+                      <div className="flex items-center gap-4 sm:gap-5">
                         {/* Rank Badge */}
-                        <div className={`flex items-center justify-center w-16 h-16 rounded-full font-bold text-2xl ${
-                          index === 0 ? 'bg-yellow-500 text-slate-900' :
-                          index === 1 ? 'bg-slate-400 text-slate-900' :
-                          index === 2 ? 'bg-orange-600 text-white' :
-                          'bg-slate-700 text-slate-300'
-                        }`}>
-                          {index === 0 ? '👑' : `#${index + 1}`}
+                        <div
+                          className={`flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl font-black text-lg sm:text-xl font-mono shrink-0 shadow-lg ${
+                            index === 0
+                              ? 'bg-gradient-to-br from-amber-400 to-yellow-600 text-slate-950 ring-2 ring-amber-300/50'
+                              : index === 1
+                              ? 'bg-gradient-to-br from-slate-200 to-slate-400 text-slate-950 ring-2 ring-slate-300/30'
+                              : index === 2
+                              ? 'bg-gradient-to-br from-amber-700 to-amber-900 text-amber-100 ring-2 ring-amber-600/30'
+                              : 'bg-white/[0.05] border border-white/10 text-slate-400'
+                          }`}
+                        >
+                          {index === 0 ? <Crown className="w-6 h-6" /> : `#${index + 1}`}
                         </div>
                         
                         {/* User Details */}
                         <div>
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="text-2xl font-bold">
+                          <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                            <h3 className="text-xl sm:text-2xl font-bold font-display text-white">
                               {result.username}
                             </h3>
-                            {(result.userId === user?.id || result.userId === user?._id) && (
-                              <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            {isCurrentUser && (
+                              <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold">
                                 YOU
                               </span>
                             )}
-                            {index === 0 && (
-                              <span className="bg-yellow-500 text-slate-900 px-3 py-1 rounded-full text-xs font-bold">
+                            {isWinner && (
+                              <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold flex items-center gap-1">
+                                <Sparkles className="w-3 h-3 text-amber-400" />
                                 WINNER
                               </span>
                             )}
                           </div>
-                          
-                          {/* Stats */}
-                          <div className="flex items-center space-x-6 text-sm">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-2xl">💨</span>
-                              <div>
-                                <p className="text-slate-400 text-xs">Speed</p>
-                                <p className="font-bold text-xl text-indigo-400">{result.wpm} WPM</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <span className="text-2xl">🎯</span>
-                              <div>
-                                <p className="text-slate-400 text-xs">Accuracy</p>
-                                <p className="font-bold text-xl text-green-400">{result.accuracy}%</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2">
-                              <span className="text-2xl">⏱️</span>
-                              <div>
-                                <p className="text-slate-400 text-xs">Time</p>
-                                <p className="font-bold text-lg">{Math.round(result.timeTaken)}s</p>
-                              </div>
-                            </div>
-                          </div>
+                          <p className="text-xs text-slate-400 font-mono">
+                            Completed in <span className="text-slate-200 font-semibold">{Math.round(result.timeTaken || 0)}s</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right: Telemetry Grid */}
+                      <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-white/10 pt-3 sm:pt-0 font-mono">
+                        <div className="text-center sm:text-right">
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Velocity</p>
+                          <p className="text-xl sm:text-2xl font-black text-indigo-400">
+                            {result.wpm} <span className="text-xs text-slate-400 font-normal">WPM</span>
+                          </p>
+                        </div>
+                        
+                        <div className="w-px h-8 bg-white/10 hidden sm:block" />
+
+                        <div className="text-center sm:text-right">
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Precision</p>
+                          <p className="text-xl sm:text-2xl font-black text-emerald-400">
+                            {result.accuracy}%
+                          </p>
+                        </div>
+
+                        <div className="w-px h-8 bg-white/10 hidden sm:block" />
+
+                        <div className="text-center sm:text-right">
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Time</p>
+                          <p className="text-xl sm:text-2xl font-black text-white">
+                            {Math.round(result.timeTaken)}s
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-12 bg-slate-800 rounded-xl">
-                  <p className="text-slate-400">No results available yet...</p>
-                </div>
-              )}
-            </div>
-
-            {/* Personal Performance Graph */}
-            <div className="mb-12 bg-slate-800 rounded-xl p-6">
-              <h2 className="text-2xl font-bold mb-4 text-center">Your Performance</h2>
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <ResultChart data={{
-                  series1Name: 'WPM',
-                  series2Name: 'Accuracy (%)',
-                  time: chartData.time,
-                  wpm: chartData.wpm,
-                  raw: chartData.raw
-                }} />
+                );
+              })
+            ) : (
+              <div className="text-center py-12 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl">
+                <Users className="w-10 h-10 text-slate-500 mx-auto mb-2 opacity-40" />
+                <p className="text-slate-400 font-mono text-sm">Aggregating telemetry results from arena...</p>
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex space-x-4">
-              <button
-                onClick={() => navigate('/multiplayer')}
-                className="flex-1 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                🎮 Play Again
-              </button>
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="flex-1 py-4 bg-slate-700 text-white rounded-xl font-bold text-lg hover:bg-slate-600 transition-all duration-300"
-              >
-                📊 Dashboard
-              </button>
+          {/* Personal Performance Graph */}
+          <div className="mb-8 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold font-display text-white">Your Velocity Curve</h2>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">Speed trajectory & precision consistency</p>
+              </div>
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/[0.05] border border-white/10 text-slate-300">
+                Live Telemetry
+              </span>
             </div>
+            
+            <div className="rounded-2xl bg-slate-950/40 border border-white/5 p-4">
+              <ResultChart data={{
+                series1Name: 'WPM',
+                series2Name: 'Accuracy (%)',
+                time: chartData.time,
+                wpm: chartData.wpm,
+                raw: chartData.raw
+              }} />
+            </div>
+          </div>
+
+          {/* Action Navigation Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 font-mono">
+            <button
+              onClick={() => navigate('/multiplayer')}
+              className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-indigo-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 group"
+            >
+              <RotateCcw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+              <span>Queue Another Match</span>
+            </button>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex-1 py-4 px-6 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-bold text-sm sm:text-base transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <LayoutDashboard className="w-5 h-5 text-slate-400" />
+              <span>Return to Dashboard</span>
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // Game screen
+  // Active Game Screen
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+      {/* Ambient Glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-5xl h-[420px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main typing area */}
-          <div className="lg:col-span-3">
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
-              <div className="bg-slate-800 rounded-lg p-4 text-center">
-                <p className="text-slate-400 text-sm mb-1">Time</p>
-                <p className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-500' : ''}`}>
+          {/* Main typing arena */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Top Telemetry HUD */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 font-mono">
+              {/* Time Remaining */}
+              <div className={`rounded-2xl p-4 backdrop-blur-xl transition-all duration-300 relative overflow-hidden ${
+                timeLeft <= 10
+                  ? 'bg-rose-500/10 border-2 border-rose-500/60 shadow-[0_0_25px_rgba(244,63,94,0.2)] animate-pulse'
+                  : 'bg-slate-900/40 border border-white/10'
+              }`}>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span>TIME REMAINING</span>
+                  <Clock className={`w-3.5 h-3.5 ${timeLeft <= 10 ? 'text-rose-400' : 'text-slate-400'}`} />
+                </div>
+                <p className={`text-2xl sm:text-3xl font-black ${timeLeft <= 10 ? 'text-rose-400' : 'text-white'}`}>
                   {timeLeft}s
                 </p>
+                <div className="text-[10px] text-slate-500 font-normal mt-0.5">Countdown</div>
               </div>
-              <div className="bg-slate-800 rounded-lg p-4 text-center">
-                <p className="text-slate-400 text-sm mb-1">WPM</p>
-                <p className="text-2xl font-bold text-indigo-500">{myStats.wpm}</p>
+
+              {/* Velocity */}
+              <div className="rounded-2xl bg-slate-900/40 border border-white/10 p-4 backdrop-blur-xl">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span>VELOCITY</span>
+                  <Zap className="w-3.5 h-3.5 text-indigo-400" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-indigo-400">{myStats.wpm}</p>
+                <div className="text-[10px] text-slate-500 font-normal mt-0.5">WPM (Words/Min)</div>
               </div>
-              <div className="bg-slate-800 rounded-lg p-4 text-center">
-                <p className="text-slate-400 text-sm mb-1">Accuracy</p>
-                <p className="text-2xl font-bold text-green-500">{myStats.accuracy}%</p>
+
+              {/* Precision */}
+              <div className="rounded-2xl bg-slate-900/40 border border-white/10 p-4 backdrop-blur-xl">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span>PRECISION</span>
+                  <Target className="w-3.5 h-3.5 text-emerald-400" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-emerald-400">{myStats.accuracy}%</p>
+                <div className="text-[10px] text-slate-500 font-normal mt-0.5">Accuracy Ratio</div>
               </div>
-              <div className="bg-slate-800 rounded-lg p-4 text-center">
-                <p className="text-slate-400 text-sm mb-1">Progress</p>
-                <p className="text-2xl font-bold">{Math.round(myStats.progress)}%</p>
+
+              {/* Track Completion */}
+              <div className="rounded-2xl bg-slate-900/40 border border-white/10 p-4 backdrop-blur-xl">
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span>PROGRESS</span>
+                  <Flag className="w-3.5 h-3.5 text-cyan-400" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-cyan-400">{Math.round(myStats.progress)}%</p>
+                <div className="text-[10px] text-slate-500 font-normal mt-0.5">Lap Distance</div>
               </div>
             </div>
 
-            {/* Paragraph display */}
-            <div className="bg-slate-800 rounded-xl p-6 mb-6 max-h-48 overflow-y-auto">
-              <div className="text-lg leading-relaxed font-mono select-none whitespace-pre-wrap break-words relative">
+            {/* Paragraph Display Container */}
+            <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-mono text-slate-300 font-semibold uppercase tracking-wider">
+                    Arena Target Track
+                  </span>
+                </div>
+                <span className="text-xs font-mono text-slate-500">
+                  {input.length} / {paragraph.length} chars
+                </span>
+              </div>
+
+              {/* Paragraph Characters */}
+              <div className="text-lg sm:text-xl leading-relaxed font-mono select-none whitespace-pre-wrap break-words min-h-[120px] max-h-56 overflow-y-auto pr-2">
                 {paragraph.split('').map((char, index) => {
-                  let className = 'text-slate-500';
+                  let className = 'text-slate-500 transition-colors';
                   
                   if (index < input.length) {
-                    // Already typed
                     if (input[index] === char) {
-                      className = 'text-green-400';
+                      className = 'text-emerald-400 font-semibold';
                     } else {
-                      className = 'text-red-500 bg-red-900/30 rounded px-0.5';
+                      className = 'text-rose-400 bg-rose-500/25 rounded px-0.5 underline decoration-rose-500';
                     }
                   }
                   
-                  // Current cursor position — render a blinking caret before this char
+                  // Current cursor position
                   const isCursor = index === input.length;
                   
                   return (
@@ -434,47 +529,55 @@ export default function MultiplayerGame() {
                 })}
                 {/* Cursor at very end of text */}
                 {input.length === paragraph.length && (
-                  <span className="cursor-blink ml-0.5" style={{height: '1.25em'}} aria-hidden="true" />
+                  <span className="cursor-blink ml-0.5" style={{ height: '1.25em' }} aria-hidden="true" />
                 )}
               </div>
               
               {/* Error indicator */}
               {errors > 0 && (
-                <div className="mt-3 flex items-center text-red-400 text-sm">
-                  <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  {errors} error{errors !== 1 ? 's' : ''} - Keep typing!
+                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-mono">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{errors} typo{errors !== 1 ? 's' : ''} detected — Correct your buffer to proceed</span>
                 </div>
               )}
             </div>
 
             {/* Input area */}
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={handleTyping}
-              disabled={finished}
-              placeholder="Start typing here..."
-              className="w-full px-6 py-4 bg-slate-800 border-2 border-slate-600 rounded-xl focus:outline-none focus:border-indigo-500 text-xl font-mono resize-none disabled:opacity-50"
-              rows="4"
-              spellCheck="false"
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off"
-            />
+            <div className="relative">
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={handleTyping}
+                disabled={finished}
+                placeholder={finished ? "Finished! Stand by for final race rankings..." : "Type the passage here..."}
+                className="w-full px-6 py-4 bg-slate-950/60 border border-white/15 focus:border-indigo-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/25 text-lg sm:text-xl font-mono text-white placeholder-slate-600 resize-none transition-all shadow-inner disabled:opacity-50"
+                rows="4"
+                spellCheck="false"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+              />
+            </div>
 
             {finished && (
-              <div className="mt-4 p-4 bg-green-500/10 border border-green-500 rounded-lg text-green-500 text-center">
-                <p className="font-semibold">✓ Finished! Waiting for other players...</p>
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center font-mono flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/5">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <span className="font-semibold text-sm sm:text-base">Track Finished! Awaiting other pilots to cross the finish line...</span>
               </div>
             )}
 
             {/* Live Performance Graph */}
-            {!finished && chartData.time.length > 0 && (
-              <div className="mt-6 bg-slate-800 rounded-xl p-4 hidden md:block">
-                <h3 className="text-slate-400 text-sm font-semibold mb-2">Live Performance</h3>
-                <div className="bg-slate-700/30 rounded-lg p-2 h-48">
+            {!finished && chartData.time.length > 2 && (
+              <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl p-5 sm:p-6 shadow-2xl hidden md:block">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider font-semibold">
+                    Live Telemetry Stream
+                  </span>
+                  <span className="text-xs font-mono text-indigo-400">
+                    Real-time
+                  </span>
+                </div>
+                <div className="rounded-xl bg-slate-950/40 border border-white/5 p-3 h-48">
                   <ResultChart 
                     className="h-full"
                     data={{
@@ -490,101 +593,105 @@ export default function MultiplayerGame() {
             )}
           </div>
 
-          {/* Players sidebar */}
+          {/* Players Live Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-slate-800 rounded-xl p-6 sticky top-4">
-              <h3 className="text-xl font-bold mb-4 flex items-center">
-                <span className="text-2xl mr-2">🏁</span>
-                Live Progress
-              </h3>
+            <div className="rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl p-6 shadow-2xl sticky top-28 space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-indigo-400" />
+                  <h3 className="text-base font-bold font-display text-white">Live Grid</h3>
+                </div>
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/10 text-slate-400">
+                  {players.length + 1} Racers
+                </span>
+              </div>
               
               <div className="space-y-4">
                 {/* Current user */}
-                <div className="pb-4 border-b border-slate-700">
+                <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 relative">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">👤</span>
-                      <span className="font-semibold text-indigo-400">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold font-mono text-indigo-300">
                         {user?.username}
                       </span>
-                      <span className="text-xs bg-indigo-600 px-2 py-0.5 rounded">YOU</span>
+                      <span className="text-[10px] font-mono font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full">
+                        YOU
+                      </span>
                     </div>
-                    <span className="text-sm font-bold text-indigo-400">
+                    <span className="text-xs font-bold font-mono text-indigo-300">
                       {Math.round(myStats.progress)}%
                     </span>
                   </div>
-                  <div className="bg-slate-700 rounded-full h-4 overflow-hidden mb-2">
+
+                  {/* Progress bar track */}
+                  <div className="bg-slate-950/60 rounded-full h-3 overflow-hidden mb-2 border border-white/5">
                     <div
-                      className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full transition-all duration-300 ease-out flex items-center justify-end pr-2"
+                      className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-full transition-all duration-300 ease-out rounded-full"
                       style={{ width: `${myStats.progress}%` }}
-                    >
-                      {myStats.progress > 10 && (
-                        <span className="text-xs font-bold text-white">🏃</span>
-                      )}
-                    </div>
+                    />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>💨 {myStats.wpm} WPM</span>
-                    <span>🎯 {myStats.accuracy}% accuracy</span>
+
+                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span className="text-indigo-400 font-semibold">{myStats.wpm} WPM</span>
+                    <span className="text-emerald-400 font-semibold">{myStats.accuracy}% ACC</span>
                   </div>
+
                   {finished && (
-                    <div className="mt-2 text-xs text-green-400 font-semibold flex items-center">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Finished!
+                    <div className="mt-2 text-xs font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Finished!</span>
                     </div>
                   )}
                 </div>
 
                 {/* Other players */}
                 {players.filter(p => p.userId !== user?.id && p.userId !== user?._id).length > 0 ? (
-                  players.filter(p => p.userId !== user?.id && p.userId !== user?._id).map((player, index) => (
-                    <div key={player.userId || index}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xl">👥</span>
-                          <span className="font-semibold">{player.username}</span>
+                  players.filter(p => p.userId !== user?.id && p.userId !== user?._id).map((player, index) => {
+                    const isOpponentFinished = finishedPlayers.current.has(player.userId);
+                    return (
+                      <div key={player.userId || index} className="p-3 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium font-mono text-slate-200 truncate max-w-[130px]">
+                            {player.username}
+                          </span>
+                          <span className="text-xs font-bold font-mono text-emerald-400">
+                            {Math.round(player.progress || 0)}%
+                          </span>
                         </div>
-                        <span className="text-sm font-bold text-green-400">
-                          {Math.round(player.progress)}%
-                        </span>
-                      </div>
-                      <div className="bg-slate-700 rounded-full h-4 overflow-hidden mb-2">
-                        <div
-                          className="bg-gradient-to-r from-green-500 to-emerald-500 h-full transition-all duration-300 ease-out flex items-center justify-end pr-2"
-                          style={{ width: `${player.progress}%` }}
-                        >
-                          {player.progress > 10 && (
-                            <span className="text-xs font-bold text-white">🏃</span>
-                          )}
+
+                        <div className="bg-slate-950/60 rounded-full h-2.5 overflow-hidden mb-2 border border-white/5">
+                          <div
+                            className="bg-gradient-to-r from-emerald-500 to-cyan-500 h-full transition-all duration-300 ease-out rounded-full"
+                            style={{ width: `${player.progress || 0}%` }}
+                          />
                         </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-slate-400">
-                        <span>💨 {player.wpm} WPM</span>
-                        <span>🎯 {player.accuracy}% acc</span>
-                      </div>
-                      {finishedPlayers.current.has(player.userId) && (
-                        <div className="mt-1 text-xs text-green-400 font-semibold flex items-center">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          Finished!
+
+                        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                          <span>{player.wpm || 0} WPM</span>
+                          <span>{player.accuracy || 100}% ACC</span>
                         </div>
-                      )}
-                    </div>
-                  ))
+
+                        {isOpponentFinished && (
+                          <div className="mt-1.5 text-xs font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>Finished!</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
-                  <div className="text-center text-slate-500 py-8">
-                    <p className="text-3xl mb-2">👻</p>
-                    <p className="text-sm">No other players yet</p>
+                  <div className="text-center text-slate-500 py-6 font-mono text-xs">
+                    <p className="text-2xl mb-1">🏁</p>
+                    <p>No other drivers in lane</p>
                   </div>
                 )}
               </div>
 
               {!connected && (
-                <div className="mt-4 p-2 bg-yellow-500/10 border border-yellow-500 rounded text-yellow-500 text-xs text-center">
-                  🔄 Reconnecting...
+                <div className="mt-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono text-center flex items-center justify-center gap-1.5">
+                  <WifiOff className="w-3.5 h-3.5 shrink-0" />
+                  <span>Reconnecting to Grid...</span>
                 </div>
               )}
             </div>

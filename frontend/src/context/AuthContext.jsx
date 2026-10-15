@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authService';
 
 const AuthContext = createContext(null);
@@ -14,6 +14,20 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authModal, setAuthModal] = useState({ isOpen: false, mode: 'login' }); // mode: 'login' | 'signup'
+
+  const openAuthModal = useCallback((mode = 'login') => {
+    setAuthModal({ isOpen: true, mode });
+  }, []);
+
+  const closeAuthModal = useCallback(() => {
+    setAuthModal((prev) => ({ ...prev, isOpen: false }));
+    if (typeof window !== 'undefined' && window.location.search.includes('auth=')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('auth');
+      window.history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+    }
+  }, []);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -90,6 +104,10 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateUser,
     isAuthenticated: !!user,
+    authModal,
+    openAuthModal,
+    closeAuthModal,
+    setAuthModal,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -174,11 +174,12 @@ export default function AIGame() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <Bot className="w-16 h-16 text-indigo-500 animate-pulse mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Generating AI Prompt...</h2>
-          <p className="text-slate-400">Consulting Gemini for a {settings.topic} paragraph</p>
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center relative selection:bg-indigo-500/30">
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
+        <div className="text-center p-8 rounded-3xl bg-slate-900/40 border border-white/10 backdrop-blur-2xl shadow-2xl">
+          <Bot className="w-14 h-14 text-indigo-400 animate-bounce mx-auto mb-4" />
+          <h2 className="text-xl sm:text-2xl font-bold font-display text-white mb-2">Synthesizing Prompt Lore...</h2>
+          <p className="text-xs sm:text-sm text-slate-400 font-mono">Generating a high-velocity {settings.topic} track via AI engine</p>
         </div>
       </div>
     );
@@ -187,70 +188,79 @@ export default function AIGame() {
   if (finished) {
     const playerWon = input.length === text.length && botProgress < text.length;
     return (
-      <div className="min-h-screen bg-slate-900">
-        <Navbar isLoggedIn={true} />
-        <div className="container mx-auto px-4 pt-20 pb-16">
-          <div className="max-w-2xl mx-auto bg-slate-800 rounded-xl p-8 text-center shadow-2xl border border-indigo-500/20">
-            <h1 className="text-4xl font-bold mb-2">Race Finished!</h1>
-            <h2 className={`text-2xl font-bold mb-8 ${playerWon ? 'text-green-500' : 'text-red-500'}`}>
-              {playerWon ? 'You Beat the Ghost Bot!' : 'The Ghost Bot Won!'}
+      <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-4xl h-[400px] bg-indigo-600/15 blur-[140px] pointer-events-none rounded-full -z-10" />
+        <Navbar />
+
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+          <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-10 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] text-center">
+            <h1 className="text-3xl sm:text-4xl font-black font-display text-white mb-2">Ghost Race Concluded</h1>
+            <h2 className={`text-xl sm:text-2xl font-bold mb-8 font-mono ${playerWon ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {playerWon ? '🏆 You Outpaced the Ghost Bot!' : '🤖 Ghost Bot Claimed Victory!'}
             </h2>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-slate-700 rounded-lg p-6 border-b-4 border-indigo-500">
-                <p className="text-slate-400 text-sm mb-2">Your WPM</p>
-                <p className="text-3xl font-bold text-white">{wpm}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 font-mono mb-8">
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1">Your Speed</p>
+                <p className="text-2xl sm:text-3xl font-black text-indigo-300">{wpm}</p>
+                <span className="text-[10px] text-slate-500 font-normal">WPM</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6 border-b-4 border-purple-500">
-                <p className="text-slate-400 text-sm mb-2">Bot WPM</p>
-                <p className="text-3xl font-bold text-white">{botWpm}</p>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1">Bot Speed</p>
+                <p className="text-2xl sm:text-3xl font-black text-purple-300">{botWpm}</p>
+                <span className="text-[10px] text-slate-500 font-normal">WPM</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Accuracy</p>
-                <p className="text-3xl font-bold text-green-500">{accuracy}%</p>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1">Accuracy</p>
+                <p className="text-2xl sm:text-3xl font-black text-emerald-400">{accuracy}%</p>
+                <span className="text-[10px] text-slate-500 font-normal">Precision</span>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">Time</p>
-                <p className="text-3xl font-bold text-white">{timeElapsed}s</p>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-xs text-slate-400 uppercase mb-1">Elapsed</p>
+                <p className="text-2xl sm:text-3xl font-black text-white">{timeElapsed}s</p>
+                <span className="text-[10px] text-slate-500 font-normal">Time</span>
               </div>
             </div>
 
-            <div className="flex space-x-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8 font-mono">
               <button
+                type="button"
                 onClick={() => navigate('/ai-practice')}
-                className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+                className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/25 transition-all cursor-pointer"
               >
                 Race Again
               </button>
               <button
+                type="button"
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 py-3 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 transition"
+                className="flex-1 py-3.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer"
               >
-                Dashboard
+                Return to Dashboard
               </button>
             </div>
 
-            {/* AI Coach Section */}
-            <div className="bg-slate-800 rounded-xl p-8 text-left shadow-xl mb-8">
-              <div className="flex items-center mb-6">
-                <Bot className="w-8 h-8 text-indigo-500 mr-3" />
-                <h3 className="text-2xl font-bold text-white">AI Typing Coach Analysis</h3>
+            {/* AI Coach Feedback Section */}
+            <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-6 text-left shadow-lg">
+              <div className="flex items-center gap-3 mb-4">
+                <Bot className="w-6 h-6 text-indigo-400" />
+                <h3 className="text-lg font-bold font-display text-white">AI Coach Diagnostic</h3>
               </div>
               
               {coachLoading ? (
-                <div className="animate-pulse space-y-3">
-                  <div className="h-4 bg-slate-700 rounded w-3/4"></div>
-                  <div className="h-4 bg-slate-700 rounded w-1/2"></div>
+                <div className="animate-pulse space-y-2">
+                  <div className="h-4 bg-white/5 rounded w-3/4" />
+                  <div className="h-4 bg-white/5 rounded w-1/2" />
                 </div>
               ) : coachFeedback ? (
                 <>
-                  <p className="text-slate-300 text-lg mb-8 italic border-l-4 border-indigo-500 pl-4 py-2">
+                  <p className="text-slate-300 text-sm mb-6 italic border-l-2 border-indigo-400 pl-3.5 py-1">
                     "{coachFeedback.feedback}"
                   </p>
-                  <div className="bg-slate-700/50 p-6 rounded-xl">
-                    <h4 className="text-lg font-bold text-indigo-400 mb-2">Practice Your Weaknesses</h4>
-                    <p className="text-slate-400 mb-6">I've generated a new paragraph specifically targeting the keys you missed most. Want to practice it?</p>
+                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                    <h4 className="text-sm font-bold text-indigo-300 mb-1">Targeted Weakness Drill</h4>
+                    <p className="text-xs text-slate-400 font-mono mb-4">A custom training track generated targeting the keys you hesitated on or missed.</p>
                     <button
+                      type="button"
                       onClick={() => {
                         setText(coachFeedback.practiceText);
                         setInput('');
@@ -261,14 +271,14 @@ export default function AIGame() {
                         setCoachFeedback(null);
                         missedKeysMap.current = {};
                       }}
-                      className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-purple-500 hover:to-indigo-500 transition shadow-lg"
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs shadow-md transition-all cursor-pointer"
                     >
-                      Start Targeted Practice Race
+                      Start Targeted Drill Race
                     </button>
                   </div>
                 </>
               ) : (
-                <p className="text-slate-400">Could not load coach feedback.</p>
+                <p className="text-xs text-slate-400 font-mono">Telemetry feedback synced with profile.</p>
               )}
             </div>
           </div>
@@ -281,90 +291,95 @@ export default function AIGame() {
   const botProgressPct = text.length > 0 ? (botProgress / text.length) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <Navbar isLoggedIn={true} />
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-indigo-500/30 selection:text-white pb-24">
+      {/* Specular Ambient Glows */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[85vw] max-w-4xl h-[420px] bg-indigo-600/15 blur-[150px] pointer-events-none rounded-full -z-10" />
+      <Navbar />
 
-      <div className="container mx-auto px-4 pt-20 pb-8">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* Progress Bars */}
-          <div className="bg-slate-800 rounded-xl p-6 mb-8 shadow-lg">
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-1 font-semibold text-indigo-300">
-                <div className="flex items-center"><User className="w-4 h-4 mr-1" /> You</div>
-                <div>{wpm} WPM</div>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-3">
-                <div className="bg-indigo-500 h-3 rounded-full transition-all duration-200" style={{ width: `${playerProgressPct}%` }}></div>
-              </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36">
+        {/* Duel Progress Trackers */}
+        <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-5 sm:p-6 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] mb-6 font-mono space-y-4">
+          <div>
+            <div className="flex justify-between text-xs mb-1.5 font-bold text-indigo-300">
+              <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-indigo-400" /> You (Player)</div>
+              <div>{wpm} WPM</div>
             </div>
-            <div>
-              <div className="flex justify-between text-sm mb-1 font-semibold text-purple-400">
-                <div className="flex items-center"><Bot className="w-4 h-4 mr-1" /> Ghost Bot ({settings.botSpeed})</div>
-                <div>{botWpm} WPM</div>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-3">
-                <div className="bg-purple-500 h-3 rounded-full transition-all duration-1000" style={{ width: `${botProgressPct}%` }}></div>
-              </div>
+            <div className="w-full bg-white/[0.05] border border-white/10 rounded-full h-3 overflow-hidden p-[1px]">
+              <div className="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full transition-all duration-200" style={{ width: `${playerProgressPct}%` }} />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Time Elapsed</p>
-              <p className="text-2xl font-bold">{timeElapsed}s</p>
+          <div>
+            <div className="flex justify-between text-xs mb-1.5 font-bold text-purple-300">
+              <div className="flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-purple-400" /> Ghost Bot ({settings.botSpeed})</div>
+              <div>{botWpm} WPM</div>
             </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Current WPM</p>
-              <p className="text-2xl font-bold text-indigo-500">{wpm}</p>
-            </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Accuracy</p>
-              <p className="text-2xl font-bold text-green-500">{accuracy}%</p>
-            </div>
-            <div className="bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-slate-400 text-sm mb-1">Mistakes</p>
-              <p className="text-2xl font-bold text-red-500">{mistakes}</p>
+            <div className="w-full bg-white/[0.05] border border-white/10 rounded-full h-3 overflow-hidden p-[1px]">
+              <div className="bg-gradient-to-r from-purple-500 to-rose-400 h-full rounded-full transition-all duration-500" style={{ width: `${botProgressPct}%` }} />
             </div>
           </div>
-
-          <div className="bg-slate-800 rounded-xl p-8 mb-6 shadow-xl relative">
-            {/* Bot cursor indicator on text (optional subtle highlight) */}
-            <p className="text-2xl leading-relaxed mb-6 font-mono relative z-10">
-              {text.split('').map((char, index) => {
-                let color = 'text-slate-500';
-                if (index < input.length) {
-                  color = input[index] === char ? 'text-green-500' : 'text-red-500';
-                }
-                const isPlayerCursor = index === input.length;
-                const isBotCursor = index === Math.floor(botProgress);
-                
-                return (
-                  <span key={index} className="relative">
-                    {isBotCursor && (
-                       <span className="absolute -left-1 -bottom-1 w-2 h-1 bg-purple-500 animate-pulse rounded-full" />
-                    )}
-                    {isPlayerCursor && (
-                      <span className="cursor-blink absolute -left-0.5 top-0 bottom-0 bg-indigo-500 w-0.5" aria-hidden="true" />
-                    )}
-                    <span className={color}>{char}</span>
-                  </span>
-                );
-              })}
-            </p>
-          </div>
-
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={handleInputChange}
-            disabled={finished}
-            placeholder="Start typing to begin the race against the AI..."
-            className="w-full px-6 py-4 bg-slate-800 border-2 border-slate-600 rounded-xl focus:outline-none focus:border-indigo-500 text-xl font-mono resize-none shadow-lg"
-            rows="4"
-            autoFocus
-          />
         </div>
+
+        {/* Real-time Telemetry Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 font-mono">
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase">Time Elapsed</span>
+            <span className="block text-2xl font-black text-white mt-1">{timeElapsed}s</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase">Your Velocity</span>
+            <span className="block text-2xl font-black text-indigo-300 mt-1">{wpm} <span className="text-xs font-normal text-slate-500">WPM</span></span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase">Accuracy</span>
+            <span className="block text-2xl font-black text-emerald-400 mt-1">{accuracy}%</span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-white/10 backdrop-blur-xl text-center">
+            <span className="text-[11px] text-slate-400 uppercase">Mistakes</span>
+            <span className="block text-2xl font-black text-rose-400 mt-1">{mistakes}</span>
+          </div>
+        </div>
+
+        {/* Text Prompt Target Card */}
+        <div className="rounded-3xl bg-slate-900/40 border border-white/10 p-6 sm:p-8 backdrop-blur-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] mb-6">
+          <p className="text-xl sm:text-2xl leading-relaxed font-mono relative select-none">
+            {text.split('').map((char, index) => {
+              let color = 'text-slate-500';
+              if (index < input.length) {
+                color = input[index] === char ? 'text-emerald-400 font-semibold' : 'text-rose-400 bg-rose-500/20 rounded';
+              }
+              const isPlayerCursor = index === input.length;
+              const isBotCursor = index === Math.floor(botProgress);
+              
+              return (
+                <span key={index} className="relative">
+                  {isBotCursor && (
+                    <span className="absolute -left-1 -bottom-1 w-2 h-1 bg-purple-400 animate-pulse rounded-full" />
+                  )}
+                  {isPlayerCursor && (
+                    <span className="cursor-blink absolute -left-0.5 top-0 bottom-0 bg-indigo-400 w-0.5" aria-hidden="true" />
+                  )}
+                  <span className={color}>{char}</span>
+                </span>
+              );
+            })}
+          </p>
+        </div>
+
+        {/* Keystroke Receiver Input */}
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={handleInputChange}
+          disabled={finished}
+          placeholder="Start typing to begin the race against Ghost AI..."
+          className="w-full px-6 py-4 rounded-2xl bg-white/[0.04] border border-white/15 focus:outline-none focus:border-indigo-400/60 focus:bg-white/[0.07] text-white font-mono text-lg sm:text-xl resize-none backdrop-blur-md transition-all shadow-xl"
+          rows={3}
+          autoFocus
+        />
       </div>
     </div>
   );
