@@ -33,7 +33,6 @@ const httpServer = createServer(app);
 // CORS Configuration
 // ======================
 
-// Normalize URLs and remove trailing slashes
 const parseOrigins = (value?: string): string[] =>
   value
     ?.split(',')
@@ -46,24 +45,14 @@ const allowedOrigins = [
   ...parseOrigins(process.env.CORS_ORIGINS),
 ].filter((origin, index, origins) => origins.indexOf(origin) === index);
 
-// Allow local development origins outside production
-if (process.env.NODE_ENV !== 'production') {
-  const devOrigins = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://[::1]:5173',
-  ];
-
-  devOrigins.forEach((origin) => {
-    if (!allowedOrigins.includes(origin)) {
-      allowedOrigins.push(origin);
-    }
-  });
-}
-
+// Allow localhost only during development
 const isDevOriginAllowed = (origin: string): boolean =>
   process.env.NODE_ENV !== 'production' &&
-  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+
+// Allow the main Vercel domain and preview deployments for this project
+const isVercelOriginAllowed = (origin: string): boolean =>
+  /^https:\/\/typing-race-multiplayer(?:-[a-z0-9-]+)?\.vercel\.app$/.test(
     origin
   );
 
@@ -74,6 +63,7 @@ const isOriginAllowed = (origin?: string): boolean => {
 
   return (
     allowedOrigins.includes(normalizedOrigin) ||
+    isVercelOriginAllowed(normalizedOrigin) ||
     isDevOriginAllowed(normalizedOrigin)
   );
 };
@@ -123,7 +113,7 @@ const io = new Server(httpServer, {
 // Routes
 // ======================
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({
     success: true,
     message: 'Typeverse API is running',
@@ -145,7 +135,6 @@ app.use('/api/ai', aiRoutes);
 
 setupSocketHandlers(io);
 
-// Controllers
 setNotificationIO(io);
 setAchievementIO(io);
 
