@@ -25,9 +25,6 @@ import { setupSocketHandlers } from './socket/socketHandler';
 // Load environment variables
 dotenv.config();
 
-// Connect MongoDB
-connectDB();
-
 // Express App
 const app: Application = express();
 const httpServer = createServer(app);
@@ -36,17 +33,20 @@ const httpServer = createServer(app);
 // CORS Configuration
 // ======================
 
-const parseOrigins = (value?: string) =>
+// Normalize URLs and remove trailing slashes
+const parseOrigins = (value?: string): string[] =>
   value
     ?.split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/+$/, ''))
     .filter(Boolean) ?? [];
 
 const allowedOrigins = [
+  'https://typing-race-multiplayer.vercel.app',
   ...parseOrigins(process.env.FRONTEND_URL),
   ...parseOrigins(process.env.CORS_ORIGINS),
-];
+].filter((origin, index, origins) => origins.indexOf(origin) === index);
 
+// Allow local development origins outside production
 if (process.env.NODE_ENV !== 'production') {
   const devOrigins = [
     'http://localhost:5173',
@@ -61,47 +61,62 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-const isDevOriginAllowed = (origin: string) =>
+const isDevOriginAllowed = (origin: string): boolean =>
   process.env.NODE_ENV !== 'production' &&
   /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(
     origin
   );
 
-const isOriginAllowed = (origin: string | undefined) =>
-  !origin || allowedOrigins.includes(origin) || isDevOriginAllowed(origin);
+const isOriginAllowed = (origin?: string): boolean => {
+  if (!origin) return true;
 
-const corsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) => {
+  const normalizedOrigin = origin.trim().replace(/\/+$/, '');
+
+  return (
+    allowedOrigins.includes(normalizedOrigin) ||
+    isDevOriginAllowed(normalizedOrigin)
+  );
+};
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
     if (isOriginAllowed(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      console.error('CORS rejected origin:', origin);
+      callback(new Error(`CORS not allowed: ${origin}`));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+// ======================
 // Express Middleware
+// ======================
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ======================
 // Socket.IO
+// ======================
+
 const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
       if (isOriginAllowed(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('CORS not allowed'));
+        console.error('Socket.IO CORS rejected origin:', origin);
+        callback(new Error(`CORS not allowed: ${origin}`));
       }
     },
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 // ======================
@@ -112,7 +127,7 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'Typeverse API is running',
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 
@@ -124,23 +139,33 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/ai', aiRoutes);
 
+// ======================
 // Socket Handlers
+// ======================
+
 setupSocketHandlers(io);
 
 // Controllers
 setNotificationIO(io);
 setAchievementIO(io);
 
+// ======================
 // Error Middleware
+// ======================
+
 app.use(notFound);
 app.use(errorHandler);
 
+// ======================
 // Start Server
+// ======================
+
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+  console.log('✅ Allowed origins:', allowedOrigins);
 });
 
 export { io };
