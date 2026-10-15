@@ -1,8 +1,10 @@
+
 import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
+
 import { connectDB } from './config/database';
 import { errorHandler, notFound } from './middleware/errorHandler';
 
@@ -45,12 +47,10 @@ const allowedOrigins = [
   ...parseOrigins(process.env.CORS_ORIGINS),
 ].filter((origin, index, origins) => origins.indexOf(origin) === index);
 
-// Allow localhost only during development
 const isDevOriginAllowed = (origin: string): boolean =>
   process.env.NODE_ENV !== 'production' &&
   /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
 
-// Allow the main Vercel domain and preview deployments for this project
 const isVercelOriginAllowed = (origin: string): boolean =>
   /^https:\/\/typing-race-multiplayer(?:-[a-z0-9-]+)?\.vercel\.app$/.test(
     origin
@@ -110,7 +110,7 @@ const io = new Server(httpServer, {
 });
 
 // ======================
-// Routes
+// Health Check
 // ======================
 
 app.get('/', (_req, res) => {
@@ -120,6 +120,10 @@ app.get('/', (_req, res) => {
     version: '1.0.0',
   });
 });
+
+// ======================
+// API Routes
+// ======================
 
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
@@ -151,10 +155,24 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-  console.log('✅ Allowed origins:', allowedOrigins);
-});
+const startServer = async (): Promise<void> => {
+  try {
+    console.log('⏳ Connecting to MongoDB...');
+
+    // Do not start accepting requests until MongoDB connects
+    await connectDB();
+
+    httpServer.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+      console.log('✅ Allowed origins:', allowedOrigins);
+    });
+  } catch (error) {
+    console.error('❌ Server startup failed:', error);
+    process.exit(1);
+  }
+};
+
+void startServer();
 
 export { io };
